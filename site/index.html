@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SeedWorks — Private, local-first apps for everyday life</title>
+  <meta name="description" content="SeedWorks builds small, private, local-first apps for money, coffee, food and whatever comes next. Home of Coconut, Cherry and Banana.">
+  <meta name="theme-color" content="#fbf9f4" id="theme-color">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SeedWorks">
+  <meta property="og:title" content="SeedWorks — Private, local-first apps for everyday life">
+  <meta property="og:description" content="Small, private, local-first apps for money, coffee, food and whatever comes next.">
+  <link rel="icon" href="assets/icons/seedworks.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script>
+    document.documentElement.classList.add("js");
+    try {
+      var savedTheme = localStorage.getItem("seedworks-theme");
+      if (savedTheme === "light" || savedTheme === "dark") {
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      }
+    } catch (error) {}
+  </script>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "SeedWorks",
+      "alternateName": "SeedWorksLab",
+      "url": "https://seedworkslab.github.io",
+      "sameAs": ["https://github.com/SeedWorksLab"],
+      "description": "An independent app studio building small, private, local-first apps for everyday life."
+    }
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="SeedWorks home">
+        <img src="assets/icons/seedworks.svg" alt="" width="34" height="34">
+        <span>SeedWorks</span>
+      </a>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="index.html" aria-current="page">Home</a>
+        <a href="apps.html">Apps</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="nav-github" href="https://github.com/SeedWorksLab">GitHub</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme">
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
+          </svg>
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/>
+          </svg>
+        </button>
+        <button class="icon-button menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero">
+      <div class="container hero-inner">
+        <div class="hero-copy reveal">
+          <span class="eyebrow">Independent app studio</span>
+          <h1>Apps for the life you actually live.</h1>
+          <p>SeedWorks builds small, private, local-first tools for the routines that matter: your money, your coffee, your meals, and whatever comes next. No accounts. No tracking. No noise.</p>
+          <div class="button-row">
+            <a class="button button-primary" href="apps.html">Explore the apps</a>
+            <a class="button button-tonal" href="about.html">Our philosophy</a>
+          </div>
+          <ul class="hero-facts">
+            <li>Private by default</li>
+            <li>Works offline</li>
+            <li>Android, Linux &amp; web</li>
+          </ul>
+        </div>
+
+        <div class="app-stack reveal" role="group" aria-label="The SeedWorks app family">
+          <a class="stack-card coconut" href="apps.html#coconut">
+            <span class="stack-icon stack-icon-logo"><img src="assets/icons/coconut-logo.jpg" alt="" width="40" height="40"></span>
+            <div>
+              <h3>Coconut</h3>
+              <p>Allowance-based budgeting and a savings reserve that grows itself.</p>
+            </div>
+          </a>
+          <a class="stack-card cherry" href="apps.html#cherry">
+            <span class="stack-icon stack-icon-logo"><img src="assets/icons/cherry-logo.jpg" alt="" width="40" height="40"></span>
+            <div>
+              <h3>Cherry</h3>
+              <p>A voice-first coffee journal that learns how you brew.</p>
+            </div>
+          </a>
+          <a class="stack-card banana" href="apps.html#banana">
+            <span class="stack-icon stack-icon-logo"><img src="assets/icons/banana-logo.png" alt="" width="40" height="40"></span>
+            <div>
+              <h3>Banana</h3>
+              <p>Weekly meal plans and shopping lists that know the deals.</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="apps">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">The family</span>
+          <h2>Three apps. One way of working.</h2>
+          <p class="lede">Each app is named after a fruit and shaped around one everyday routine. They share the same architecture, the same design language, and the same promise: your data stays yours.</p>
+        </div>
+
+        <div class="app-grid">
+          <article class="app-card coconut reveal">
+            <div class="app-icon app-icon-logo"><img src="assets/icons/coconut-logo.jpg" alt="" width="50" height="50"></div>
+            <p class="app-kicker">Personal finance</p>
+            <h3>Coconut</h3>
+            <p>A budget app built around a monthly allowance and a savings reserve, not a bank account. Plan the month, track what you spend, and let the surplus move into savings.</p>
+            <ul class="feature-list">
+              <li>Monthly allowance and savings reserve</li>
+              <li>Fixed, flexible and shared expenses</li>
+              <li>Optional sync with your own Supabase</li>
+            </ul>
+            <a class="text-link" href="apps.html#coconut">Explore Coconut</a>
+          </article>
+
+          <article class="app-card cherry reveal">
+            <div class="app-icon app-icon-logo"><img src="assets/icons/cherry-logo.jpg" alt="" width="50" height="50"></div>
+            <p class="app-kicker">Coffee brewing</p>
+            <h3>Cherry</h3>
+            <p>A coffee journal that makes recording a brew easier than skipping it. Talk through the process, capture how it tasted, and get a concrete suggestion for the next cup.</p>
+            <ul class="feature-list">
+              <li>Voice-first brew recording</li>
+              <li>Nine brewing methods and a bean catalogue</li>
+              <li>Deterministic next-brew recommendations</li>
+            </ul>
+            <a class="text-link" href="apps.html#cherry">Explore Cherry</a>
+          </article>
+
+          <article class="app-card banana reveal">
+            <div class="app-icon app-icon-logo"><img src="assets/icons/banana-logo.png" alt="" width="50" height="50"></div>
+            <p class="app-kicker">Meal planning</p>
+            <h3>Banana</h3>
+            <p>A weekly meal planner that respects your time, your tastes and your budget. It turns the plan into one organised shopping list aware of current supermarket deals.</p>
+            <ul class="feature-list">
+              <li>Time-aware weekly meal plans</li>
+              <li>Deal-aware, aisle-grouped shopping lists</li>
+              <li>Pantry, diet and allergy awareness</li>
+            </ul>
+            <a class="text-link" href="apps.html#banana">Explore Banana</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt" id="principles">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">What we believe</span>
+          <h2>Software should earn its place.</h2>
+          <p class="lede">We keep the feature set small, the data close, and the promises simple. These principles shape every SeedWorks app.</p>
+        </div>
+
+        <div class="principle-grid">
+          <article class="principle reveal">
+            <span class="principle-number">01</span>
+            <h3>Private by default</h3>
+            <p>No mandatory account, no analytics, no advertising. Your data lives on your device unless you explicitly choose otherwise.</p>
+          </article>
+          <article class="principle reveal">
+            <span class="principle-number">02</span>
+            <h3>Offline first</h3>
+            <p>Every app works fully without a connection. Manual entry is always as capable as any assisted path.</p>
+          </article>
+          <article class="principle reveal">
+            <span class="principle-number">03</span>
+            <h3>One job well</h3>
+            <p>Each app does one thing, for one person, on one device. We add features that shorten the loop, not features that fill a grid.</p>
+          </article>
+          <article class="principle reveal">
+            <span class="principle-number">04</span>
+            <h3>Yours to keep</h3>
+            <p>Export your database to a portable file whenever you want. No lock-in, no subscription gate around your own history.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="foundation">
+      <div class="container tech-strip">
+        <div class="reveal">
+          <span class="eyebrow">Under the surface</span>
+          <h2>A shared foundation, not a shared template.</h2>
+          <p class="lede">The apps are separate products, but they are built from the same deliberate stack: a deterministic core, a local database, and a Material 3 interface that feels at home on every screen.</p>
+        </div>
+        <div class="tech-panel reveal">
+          <h3>Built with</h3>
+          <div class="tech-stack">
+            <span>React Native</span>
+            <span>Expo</span>
+            <span>TypeScript</span>
+            <span>Material Design 3</span>
+            <span>Expo Router</span>
+            <span>Expo SQLite</span>
+            <span>Jest</span>
+            <span>Electron</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <div class="cta-inner reveal">
+          <h2>More fruit is growing.</h2>
+          <p>SeedWorks is bigger than three apps. New tools are already being planted for other everyday routines, each with the same privacy-first, offline-first promise.</p>
+          <div class="button-row">
+            <a class="button button-primary" href="contact.html">Follow along</a>
+            <a class="button button-outlined" href="https://github.com/SeedWorksLab">See the code on GitHub</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="SeedWorks home">
+          <img src="assets/icons/seedworks.svg" alt="" width="34" height="34">
+          <span>SeedWorks</span>
+        </a>
+        <p>Small, private, local-first apps for the things you do every day.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Apps</h3>
+        <ul>
+          <li><a href="apps.html#coconut">Coconut</a></li>
+          <li><a href="apps.html#cherry">Cherry</a></li>
+          <li><a href="apps.html#banana">Banana</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="https://github.com/SeedWorksLab">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Repositories</h3>
+        <ul>
+          <li><a href="https://github.com/SeedWorksLab/Coconut">Coconut source</a></li>
+          <li><a href="https://github.com/SeedWorksLab/Cherry">Cherry source</a></li>
+          <li><a href="https://github.com/SeedWorksLab/Banana">Banana source</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; <span id="year">2026</span> SeedWorks. Built in the open on GitHub.</p>
+      <p>Private by default. Offline first.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

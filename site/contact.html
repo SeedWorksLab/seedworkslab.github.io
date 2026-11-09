@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contact — SeedWorks</title>
+  <meta name="description" content="Get in touch with SeedWorks on GitHub. Report a bug, request a feature, or follow the development of Coconut, Cherry and Banana.">
+  <meta name="theme-color" content="#fbf9f4" id="theme-color">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SeedWorks">
+  <meta property="og:title" content="Contact — SeedWorks">
+  <meta property="og:description" content="Report a bug, request a feature, or follow the development of the SeedWorks apps.">
+  <link rel="icon" href="assets/icons/seedworks.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script>
+    document.documentElement.classList.add("js");
+    try {
+      var savedTheme = localStorage.getItem("seedworks-theme");
+      if (savedTheme === "light" || savedTheme === "dark") {
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      }
+    } catch (error) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="SeedWorks home">
+        <img src="assets/icons/seedworks.svg" alt="" width="34" height="34">
+        <span>SeedWorks</span>
+      </a>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="apps.html">Apps</a>
+        <a href="about.html">About</a>
+        <a href="contact.html" aria-current="page">Contact</a>
+        <a class="nav-github" href="https://github.com/SeedWorksLab">GitHub</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme">
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
+          </svg>
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/>
+          </svg>
+        </button>
+        <button class="icon-button menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">Contact</span>
+        <h1>Say hello, or tell us what broke.</h1>
+        <p class="lede">SeedWorks does not have a contact form, a mailing list or a tracking pixel. Everything happens in the open on GitHub, where you can see the code, the issues and the release plans.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container contact-grid">
+        <article class="contact-card span-2 reveal">
+          <span class="contact-label">The front door</span>
+          <h2>Start at the SeedWorks organization.</h2>
+          <p>The organization page is the best place to find every repository, release and discussion. If you are not sure where a question belongs, start there.</p>
+          <div class="button-row">
+            <a class="button button-primary" href="https://github.com/SeedWorksLab">Open GitHub organization</a>
+            <a class="button button-outlined" href="apps.html">Browse the apps</a>
+          </div>
+        </article>
+
+        <article class="contact-card reveal">
+          <span class="contact-label">Bugs and ideas</span>
+          <h3>Open an issue in the right repository</h3>
+          <p>Each app has its own issue tracker, release plan and documentation. That is where a bug report or feature request is most useful.</p>
+          <ul>
+            <li><a href="https://github.com/SeedWorksLab/Coconut/issues">Coconut issues</a></li>
+            <li><a href="https://github.com/SeedWorksLab/Cherry/issues">Cherry issues</a></li>
+            <li><a href="https://github.com/SeedWorksLab/Banana/issues">Banana issues</a></li>
+          </ul>
+          <div class="button-row">
+            <a class="button button-tonal" href="https://github.com/SeedWorksLab">Find the repository</a>
+          </div>
+        </article>
+
+        <article class="contact-card reveal">
+          <span class="contact-label">Follow along</span>
+          <h3>Watch what is growing</h3>
+          <p>New apps and new releases are announced in the repositories. Watch the organization or star the apps you care about to keep up.</p>
+          <ul>
+            <li>Read each app's release plan</li>
+            <li>Follow commits and releases</li>
+            <li>See the next fruit as it is planted</li>
+          </ul>
+          <div class="button-row">
+            <a class="button button-tonal" href="https://github.com/SeedWorksLab">Follow on GitHub</a>
+          </div>
+        </article>
+
+        <article class="contact-card span-2 reveal">
+          <span class="contact-label">Before you post</span>
+          <h2>Help us reproduce it.</h2>
+          <p>A good issue is the fastest route to a fix. Include the app and version, what you expected, what happened instead, and the steps that get you there. If the problem involves data, describe the shape of it rather than pasting private records.</p>
+          <ul>
+            <li>The app name, version and platform (Android, Linux or web)</li>
+            <li>Clear steps to reproduce the problem</li>
+            <li>What you expected and what actually happened</li>
+            <li>Any error message, log or screenshot that helps</li>
+            <li>Whether the app was online or offline at the time</li>
+          </ul>
+          <p class="app-side-note">Please never include API keys, Supabase credentials, financial records or other private data in a public issue.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <div class="cta-inner reveal">
+          <h2>Prefer to read the code?</h2>
+          <p>Every SeedWorks app is developed publicly, with its product specification and release plan in the repository. Start with the README that interests you.</p>
+          <div class="button-row">
+            <a class="button button-primary" href="https://github.com/SeedWorksLab/Coconut">Explore Coconut</a>
+            <a class="button button-outlined" href="https://github.com/SeedWorksLab/Cherry">Explore Cherry</a>
+            <a class="button button-outlined" href="https://github.com/SeedWorksLab/Banana">Explore Banana</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="SeedWorks home">
+          <img src="assets/icons/seedworks.svg" alt="" width="34" height="34">
+          <span>SeedWorks</span>
+        </a>
+        <p>Small, private, local-first apps for the things you do every day.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Apps</h3>
+        <ul>
+          <li><a href="apps.html#coconut">Coconut</a></li>
+          <li><a href="apps.html#cherry">Cherry</a></li>
+          <li><a href="apps.html#banana">Banana</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="https://github.com/SeedWorksLab">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Repositories</h3>
+        <ul>
+          <li><a href="https://github.com/SeedWorksLab/Coconut">Coconut source</a></li>
+          <li><a href="https://github.com/SeedWorksLab/Cherry">Cherry source</a></li>
+          <li><a href="https://github.com/SeedWorksLab/Banana">Banana source</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; <span id="year">2026</span> SeedWorks. Built in the open on GitHub.</p>
+      <p>Private by default. Offline first.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

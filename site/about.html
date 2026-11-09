@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>About — SeedWorks</title>
+  <meta name="description" content="SeedWorks is an independent app studio building small, private, local-first apps for everyday life.">
+  <meta name="theme-color" content="#fbf9f4" id="theme-color">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="SeedWorks">
+  <meta property="og:title" content="About — SeedWorks">
+  <meta property="og:description" content="An independent app studio building small, private, local-first apps for everyday life.">
+  <link rel="icon" href="assets/icons/seedworks.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <script>
+    document.documentElement.classList.add("js");
+    try {
+      var savedTheme = localStorage.getItem("seedworks-theme");
+      if (savedTheme === "light" || savedTheme === "dark") {
+        document.documentElement.setAttribute("data-theme", savedTheme);
+      }
+    } catch (error) {}
+  </script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html" aria-label="SeedWorks home">
+        <img src="assets/icons/seedworks.svg" alt="" width="34" height="34">
+        <span>SeedWorks</span>
+      </a>
+
+      <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="apps.html">Apps</a>
+        <a href="about.html" aria-current="page">About</a>
+        <a href="contact.html">Contact</a>
+        <a class="nav-github" href="https://github.com/SeedWorksLab">GitHub</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme">
+          <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
+          </svg>
+          <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="4"/>
+            <path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42 1.42M2 12h2M20 12h2M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/>
+          </svg>
+        </button>
+        <button class="icon-button menu-toggle" id="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="Open menu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M4 7h16M4 12h16M4 17h16"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <span class="eyebrow">About SeedWorks</span>
+        <h1>A small studio with a simple promise.</h1>
+        <p class="lede">SeedWorks makes focused tools for everyday life. We believe software can be useful without being demanding, connected without being extractive, and smart without putting your data on someone else's server.</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container story-grid">
+        <div class="reveal">
+          <blockquote class="pull-quote">A seed is small, self-contained, and carries everything it needs to grow. That is the shape we want our software to take.</blockquote>
+          <div class="chip-row">
+            <span class="chip">Independent</span>
+            <span class="chip">Privacy first</span>
+            <span class="chip">Open source</span>
+            <span class="chip">Built in the open</span>
+          </div>
+        </div>
+
+        <div class="story-body reveal">
+          <p>SeedWorks started with a frustration: the apps that should make daily life easier often make it heavier. They ask for an account before they are useful, upload your history by default, and charge a subscription for access to your own data.</p>
+          <p>We wanted the opposite. Small apps that open quickly, work on a plane, and keep their records on the device they belong to. Apps that treat a budget, a coffee brew or a week of meals as something worth paying attention to, without turning that attention into a product.</p>
+          <p>The fruit names keep us honest. They are approachable, memorable and a little playful. They also remind us that each app is a single, self-contained thing, not a platform waiting to absorb everything else.</p>
+          <p>Today the family is Coconut for money, Cherry for coffee and Banana for food. More fruit is already being planted. The details will differ, but the promise will not: private by default, offline first, and yours to keep.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">What we won't do</span>
+          <h2>The line we draw.</h2>
+          <p class="lede">A privacy promise is only meaningful if it rules things out. These are the things SeedWorks apps will not do.</p>
+        </div>
+
+        <div class="value-grid">
+          <article class="value-card reveal">
+            <h3>No ads or trackers</h3>
+            <p>No advertising, no analytics, no telemetry and no third-party profiling. Your attention is not the business model.</p>
+          </article>
+          <article class="value-card reveal">
+            <h3>No account wall</h3>
+            <p>You can use every core feature without registering. Optional sync is yours to configure, not a requirement for entry.</p>
+          </article>
+          <article class="value-card reveal">
+            <h3>No data lock-in</h3>
+            <p>Your records can be exported to a portable file at any time. The local database is the source of truth, not a service we control.</p>
+          </article>
+          <article class="value-card reveal">
+            <h3>No AI dependency</h3>
+            <p>Assisted features are optional. The decisions that shape your data are made by deterministic, testable logic, and manual entry is always equal.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head reveal">
+          <span class="eyebrow">How an app gets made</span>
+          <h2>Start small. Prove the loop. Then grow.</h2>
+          <p class="lede">Every SeedWorks app follows the same rough path from an ordinary annoyance to a tool you can rely on.</p>
+        </div>
+
+        <div class="timeline">
+          <div class="timeline-step reveal">
+            <h3>Start with a routine</h3>
+            <p>We pick something people do often and usually do badly: tracking money, logging a brew, planning a week of meals. The app exists to shorten the distance between intention and action.</p>
+          </div>
+          <div class="timeline-step reveal">
+            <h3>Make it local</h3>
+            <p>The database is designed first. It lives on the device, uses integer money and explicit units, and can be exported whole. Nothing depends on a backend being available.</p>
+          </div>
+          <div class="timeline-step reveal">
+            <h3>Build the deterministic core</h3>
+            <p>Budgets, recommendations, plans and splits are calculated by pure service-layer logic with unit tests. The important decisions are predictable, inspectable and repeatable.</p>
+          </div>
+          <div class="timeline-step reveal">
+            <h3>Add intelligence carefully</h3>
+            <p>AI is optional and clearly bounded. It can transcribe, extract or narrate, but it never writes directly to the database and never makes a decision that affects your records.</p>
+          </div>
+          <div class="timeline-step reveal">
+            <h3>Ship the whole loop</h3>
+            <p>An app is ready when one full cycle works without a connection: plan, act, record and learn. Then we polish the interface, the backups and the edges.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-alt">
+      <div class="container tech-strip">
+        <div class="reveal">
+          <span class="eyebrow">A shared foundation</span>
+          <h2>Different fruit, same roots.</h2>
+          <p class="lede">The apps are independent products, but they are built from a common architecture. That keeps them consistent, testable and portable across Android, Linux and the web.</p>
+          <div class="button-row button-row-spaced">
+            <a class="button button-primary" href="apps.html">Explore the apps</a>
+          </div>
+        </div>
+        <div class="tech-panel reveal">
+          <h3>The stack</h3>
+          <div class="tech-stack">
+            <span>React Native</span>
+            <span>Expo SDK</span>
+            <span>TypeScript strict</span>
+            <span>Expo Router</span>
+            <span>React Native Paper</span>
+            <span>Material Design 3</span>
+            <span>Expo SQLite</span>
+            <span>Jest</span>
+            <span>react-native-web</span>
+            <span>Electron</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cta">
+      <div class="container">
+        <div class="cta-inner reveal">
+          <h2>Built in the open.</h2>
+          <p>SeedWorks is developed publicly on GitHub. Read the code, follow the release plans, or open an issue when something can be better.</p>
+          <div class="button-row">
+            <a class="button button-primary" href="https://github.com/SeedWorksLab">Visit GitHub</a>
+            <a class="button button-outlined" href="contact.html">Get in touch</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a class="brand" href="index.html" aria-label="SeedWorks home">
+          <img src="assets/icons/seedworks.svg" alt="" width="34" height="34">
+          <span>SeedWorks</span>
+        </a>
+        <p>Small, private, local-first apps for the things you do every day.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Apps</h3>
+        <ul>
+          <li><a href="apps.html#coconut">Coconut</a></li>
+          <li><a href="apps.html#cherry">Cherry</a></li>
+          <li><a href="apps.html#banana">Banana</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Company</h3>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="https://github.com/SeedWorksLab">GitHub</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h3>Repositories</h3>
+        <ul>
+          <li><a href="https://github.com/SeedWorksLab/Coconut">Coconut source</a></li>
+          <li><a href="https://github.com/SeedWorksLab/Cherry">Cherry source</a></li>
+          <li><a href="https://github.com/SeedWorksLab/Banana">Banana source</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <p>&copy; <span id="year">2026</span> SeedWorks. Built in the open on GitHub.</p>
+      <p>Private by default. Offline first.</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

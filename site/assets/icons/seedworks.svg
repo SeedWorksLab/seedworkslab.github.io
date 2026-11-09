@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">SeedWorks sprout mark</title>
+  <path d="M32 57V35" fill="none" stroke="#4a7c59" stroke-width="6" stroke-linecap="round"/>
+  <path d="M32 42C19 42 11 33 11 20c13 0 21 9 21 22Z" fill="#8fbf8f"/>
+  <path d="M32 34c0-13 9-22 22-22 0 13-9 22-22 22Z" fill="#4a7c59"/>
+  <ellipse cx="32" cy="57" rx="9" ry="4.5" fill="#8d6e63"/>
+</svg>
