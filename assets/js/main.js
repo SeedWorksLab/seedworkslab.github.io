@@ -114,6 +114,141 @@
     year.textContent = String(new Date().getFullYear());
   }
 
+  var downloadLinks = document.querySelectorAll("[data-download-repo]");
+  var downloadStatuses = document.querySelectorAll("[data-download-status]");
+
+  if (downloadLinks.length && window.fetch) {
+    var releaseCache = {};
+
+    var setDownloadStatus = function (repo, text) {
+      downloadStatuses.forEach(function (status) {
+        if (status.getAttribute("data-download-status") === repo) {
+          status.textContent = text;
+        }
+      });
+    };
+
+    var findDownloadAsset = function (assets, repo, kind) {
+      var stableApk = repo.toLowerCase() + ".apk";
+      var apkAssets = [];
+      var linuxAssets = [];
+
+      assets.forEach(function (asset) {
+        var name = asset.name.toLowerCase();
+        if (name.slice(-4) === ".apk") {
+          apkAssets.push(asset);
+        }
+        if (
+          name.slice(-9) === ".appimage" ||
+          name.slice(-4) === ".deb" ||
+          name.slice(-4) === ".rpm"
+        ) {
+          linuxAssets.push(asset);
+        }
+      });
+
+      if (kind === "apk") {
+        for (var i = 0; i < apkAssets.length; i++) {
+          if (apkAssets[i].name.toLowerCase() === stableApk) return apkAssets[i];
+        }
+        return apkAssets[0] || null;
+      }
+
+      if (kind === "linux") {
+        for (var j = 0; j < linuxAssets.length; j++) {
+          if (linuxAssets[j].name.toLowerCase().slice(-9) === ".appimage") {
+            return linuxAssets[j];
+          }
+        }
+        return linuxAssets[0] || null;
+      }
+
+      return null;
+    };
+
+    var disableDownloadLink = function (link, label) {
+      link.classList.add("is-disabled");
+      link.setAttribute("aria-disabled", "true");
+      link.setAttribute("tabindex", "-1");
+      link.removeAttribute("href");
+      if (label) link.textContent = label;
+    };
+
+    var enableDownloadLink = function (link, asset) {
+      link.classList.remove("is-disabled");
+      link.removeAttribute("aria-disabled");
+      link.removeAttribute("tabindex");
+      link.href = asset.browser_download_url;
+    };
+
+    var loadLatestRelease = function (repo) {
+      if (!releaseCache[repo]) {
+        releaseCache[repo] = fetch(
+          "https://api.github.com/repos/SeedWorksLab/" + repo + "/releases/latest",
+          { headers: { Accept: "application/vnd.github+json" } }
+        ).then(function (response) {
+          if (response.status === 404) return null;
+          if (!response.ok) throw new Error("GitHub API returned " + response.status);
+          return response.json();
+        });
+      }
+      return releaseCache[repo];
+    };
+
+    var linksByRepo = {};
+    downloadLinks.forEach(function (link) {
+      var repo = link.getAttribute("data-download-repo");
+      if (!linksByRepo[repo]) linksByRepo[repo] = [];
+      linksByRepo[repo].push(link);
+    });
+
+    Object.keys(linksByRepo).forEach(function (repo) {
+      loadLatestRelease(repo)
+        .then(function (release) {
+          if (!release) {
+            linksByRepo[repo].forEach(function (link) {
+              var kind = link.getAttribute("data-download-kind");
+              disableDownloadLink(
+                link,
+                kind === "linux" ? "Linux build \u2014 coming soon" : "Download APK \u2014 coming soon"
+              );
+            });
+            setDownloadStatus(repo, "No release yet \u2014 the first build is coming soon.");
+            return;
+          }
+
+          var missingBuild = false;
+          linksByRepo[repo].forEach(function (link) {
+            var kind = link.getAttribute("data-download-kind");
+            var asset = findDownloadAsset(release.assets || [], repo, kind);
+            if (asset) {
+              enableDownloadLink(link, asset);
+            } else {
+              disableDownloadLink(
+                link,
+                kind === "linux" ? "Linux build \u2014 coming soon" : "Download APK \u2014 coming soon"
+              );
+              missingBuild = true;
+            }
+          });
+
+          var version = release.tag_name || "latest";
+          setDownloadStatus(
+            repo,
+            missingBuild
+              ? "Latest release: " + version + ". Some builds are coming soon."
+              : "Latest release: " + version + "."
+          );
+        })
+        .catch(function () {
+          setDownloadStatus(
+            repo,
+            "Could not check the latest release. Downloads open GitHub Releases."
+          );
+        });
+    });
+  }
+
   var revealItems = document.querySelectorAll(".reveal");
   var reduceMotion =
     window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
