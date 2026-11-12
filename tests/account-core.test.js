@@ -49,6 +49,11 @@ function makeClient(options = {}) {
 
   return {
     calls,
+    schema(name) {
+      calls.schema = calls.schema || [];
+      calls.schema.push(name);
+      return this;
+    },
     auth: {
       exchangeCodeForSession: async (code) => {
         calls.exchangeCode.push(code);
@@ -335,13 +340,14 @@ test("password reset always uses the supplied redirect", async () => {
   ]);
 });
 
-test("display name updates only the signed-in profile", async () => {
+test("username updates the account-wide profile", async () => {
   const client = makeClient();
   const service = createAccountService(client);
 
   const result = await service.updateDisplayName("  Ada   Lovelace  ");
 
   assert.deepEqual(result, { displayName: "Ada Lovelace" });
+  assert.deepEqual(client.calls.schema, ["public"]);
   assert.deepEqual(client.calls.profileUpdate, [
     {
       table: "seed_profiles",
@@ -352,13 +358,13 @@ test("display name updates only the signed-in profile", async () => {
   ]);
 });
 
-test("clearing a display name stores null", async () => {
+test("clearing the username stores null in the account profile", async () => {
   const client = makeClient();
   const service = createAccountService(client);
 
   const result = await service.updateDisplayName("   ");
 
-  assert.deepEqual(result, { displayName: "" });
+  assert.deepEqual(result, { displayName: null });
   assert.deepEqual(client.calls.profileUpdate, [
     {
       table: "seed_profiles",
@@ -386,7 +392,7 @@ test("display name write failures use a safe error", async () => {
 
   await assert.rejects(
     service.updateDisplayName("Ada"),
-    /Could not update your display name/
+    /Could not update your username/
   );
 });
 
@@ -490,10 +496,10 @@ test("account deletion fails closed if the server does not confirm", async () =>
   assert.deepEqual(client.calls.signOut, []);
 });
 
-test("overview loading uses the protected RPC", async () => {
+test("overview loading uses the protected RPC and returns the shared profile", async () => {
   const client = makeClient({
     overview: {
-      profile: { display_name: "Ada" },
+      profile: { display_name: "Ada Lovelace" },
       connections: [{ app_slug: "coconut", app_name: "Coconut" }],
       usage: [{ app_slug: "coconut", record_count: 4, byte_count: 1024 }],
       totals: { record_count: 4, byte_count: 1024 },
@@ -504,9 +510,24 @@ test("overview loading uses the protected RPC", async () => {
   const overview = await service.loadOverview();
 
   assert.deepEqual(client.calls.rpc, ["seed_account_overview"]);
-  assert.equal(overview.profile.displayName, "Ada");
+  assert.deepEqual(client.calls.schema, ["public"]);
+  assert.equal(overview.profile.displayName, "Ada Lovelace");
   assert.equal(overview.connections.length, 1);
   assert.deepEqual(overview.totals, { recordCount: 4, byteCount: 1024 });
+});
+
+test("overview loads without a Coconut settings row", async () => {
+  const client = makeClient({ overview: { profile: { display_name: null }, usage: [] } });
+  assert.equal((await createAccountService(client).loadOverview()).profile.displayName, null);
+  assert.deepEqual(client.calls.schema, ["public"]);
+});
+
+test("username update fails when the profile row is missing", async () => {
+  const client = makeClient({ profileUpdateResponse: null });
+  await assert.rejects(
+    createAccountService(client).updateDisplayName("Ada"),
+    /Could not find your account profile/
+  );
 });
 
 test("overview loading reports a safe error", async () => {

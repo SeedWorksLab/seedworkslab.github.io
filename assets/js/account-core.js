@@ -351,6 +351,7 @@ export function createAccountService(client, options = {}) {
       if (!userId) throw new AccountError("Your session has expired. Sign in again.");
 
       const { data, error } = await client
+        .schema("public")
         .from("seed_profiles")
         .update({ display_name: normalizedName || null })
         .eq("id", userId)
@@ -359,14 +360,13 @@ export function createAccountService(client, options = {}) {
 
       if (error) {
         throw new AccountError(
-          friendlyAuthError(error, "Could not update your display name.")
+          friendlyAuthError(error, "Could not update your username.")
         );
       }
       if (!data) {
-        throw new AccountError("Could not update your display name. Refresh and try again.");
+        throw new AccountError("Could not find your account profile. Refresh and try again.");
       }
-
-      return { displayName: normalizeDisplayName(data.display_name) };
+      return { displayName: asText(data.display_name) };
     },
 
     async completePasswordRecovery(newPassword) {
@@ -395,7 +395,9 @@ export function createAccountService(client, options = {}) {
     },
 
     async loadOverview() {
-      const { data, error } = await client.rpc("seed_account_overview");
+      const { data, error } = await client
+        .schema("public")
+        .rpc("seed_account_overview");
       if (error) {
         throw new AccountError(
           friendlyAuthError(error, "Could not load connected apps and data usage.")

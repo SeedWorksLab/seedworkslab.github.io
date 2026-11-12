@@ -10,7 +10,6 @@ import {
   formatDateTime,
   friendlyAuthError,
   isAccountConfigured,
-  normalizeOverview,
   passwordsMatch,
   validatePassword,
 } from "./account-core.js";
@@ -33,6 +32,7 @@ let recoveryEventSeen = false;
 let initialized = false;
 let accountDeleted = false;
 let overviewRequest = 0;
+let renderedUserId = null;
 
 function showView(name) {
   viewNodes.forEach((node) => {
@@ -211,16 +211,22 @@ async function renderSignedIn(session) {
 
   showView("signed-in");
   const requestId = ++overviewRequest;
-  renderAccountIdentity(session, emptyOverview());
+  if (renderedUserId !== session.user?.id) {
+    renderedUserId = session.user?.id;
+    renderAccountIdentity(session, emptyOverview());
+    renderConnections([]);
+    renderUsage([], emptyOverview().totals);
+  }
 
   try {
-    const overview = normalizeOverview(await service.loadOverview());
-    if (requestId !== overviewRequest) return;
+    const overview = await service.loadOverview();
+    if (requestId !== overviewRequest || activeSession?.user?.id !== session.user?.id) return false;
     renderAccountIdentity(session, overview);
     renderConnections(overview.connections);
     renderUsage(overview.usage, overview.totals);
+    return true;
   } catch (error) {
-    if (requestId !== overviewRequest) return;
+    if (requestId !== overviewRequest || activeSession?.user?.id !== session.user?.id) return false;
     const overviewError = document.getElementById("overview-error");
     if (overviewError) {
       overviewError.textContent =
@@ -229,8 +235,7 @@ async function renderSignedIn(session) {
           : "Could not load connected apps and data usage.";
       overviewError.hidden = false;
     }
-    renderConnections([]);
-    renderUsage([], emptyOverview().totals);
+    return false;
   }
 }
 
@@ -317,19 +322,23 @@ async function handleResetRequest(form) {
 
 async function handleProfileChange(form) {
   const displayName = form.elements.namedItem("displayName").value;
+  const userId = activeSession?.user?.id;
 
   setFlash("");
   setFormBusy(form, true);
   try {
     const result = await service.updateDisplayName(displayName);
+    if (userId !== activeSession?.user?.id) return;
+    // A slower overview request must not replace a newly saved username.
+    ++overviewRequest;
     renderDisplayName(activeSession, result.displayName);
     setFlash(
-      result.displayName ? "Display name updated." : "Display name cleared.",
+      result.displayName ? "Username saved. Connected apps will receive it when they sync." : "Username cleared.",
       "success"
     );
   } catch (error) {
     setFlash(
-      error instanceof AccountError ? error.message : "Could not update your display name.",
+      error instanceof AccountError ? error.message : "Could not update your username.",
       "error"
     );
   } finally {
@@ -419,6 +428,7 @@ async function handleDelete(form) {
       confirmation,
     });
     accountDeleted = true;
+    ++overviewRequest;
     form.reset();
     showView("deleted");
     setFlash("Your Seed account and its personal hosted data have been deleted.", "success");
@@ -528,8 +538,8 @@ function bindNavigation() {
     button.disabled = true;
     setFlash("");
     try {
-      if (activeSession) await renderSignedIn(activeSession);
-      setFlash("Account details refreshed.", "success");
+      const loaded = activeSession && await renderSignedIn(activeSession);
+      if (loaded) setFlash("Account details refreshed.", "success");
     } catch (error) {
       setFlash(
         error instanceof AccountError ? error.message : "Could not refresh account details.",
@@ -613,20 +623,25 @@ async function initialize() {
     if (!initialized) return;
 
     if (event === "SIGNED_OUT") {
+      ++overviewRequest;
       activeSession = null;
+      renderedUserId = null;
       recoveryMode = false;
       showView("signed-out");
       showAuthPanel("signin");
       return;
     }
 
-    if (session) {
+    if (session && session.user?.id !== activeSession?.user?.id) {
       renderSignedIn(session).catch(() => {
         setFlash("Could not load your account.", "error");
       });
       return;
     }
 
+    ++overviewRequest;
+    activeSession = null;
+    renderedUserId = null;
     showView("signed-out");
   });
 
