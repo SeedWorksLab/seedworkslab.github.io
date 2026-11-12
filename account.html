@@ -6,8 +6,9 @@
   <title>Seed account — SeedWorks</title>
   <meta name="description" content="Sign in to your Seed account to manage connected SeedWorks apps, review hosted data usage, update your password, or delete your account.">
   <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#fbf9f4" id="theme-color">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://api.github.com https://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src https://qslmlcvskctvyngofipe.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; worker-src 'none'; upgrade-insecure-requests">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SeedWorks">
   <meta property="og:title" content="Seed account — SeedWorks">
@@ -80,6 +81,12 @@
             <a class="button button-primary" href="apps.html">Explore the apps</a>
             <a class="button button-outlined" href="contact.html">Contact SeedWorks</a>
           </div>
+        </div>
+
+        <div data-account-view="framed" class="account-card account-unavailable" hidden>
+          <h2>Open your account directly</h2>
+          <p>For your security, account management cannot run inside another page.</p>
+          <a class="button button-primary" href="/account.html" target="_top">Open Seed account</a>
         </div>
 
         <div data-account-view="signed-out" class="account-auth-layout" hidden>
@@ -341,7 +348,7 @@
   </footer>
 
   <script src="assets/js/main.js"></script>
-  <script src="assets/vendor/supabase/supabase-js-2.119.0.js"></script>
+  <script src="assets/vendor/supabase/supabase-js-2.119.0.js" integrity="sha256-qGftvPsCk3Cu7HIj3WGAtWC2IfvjvGTGWE+wNp0be84="></script>
   <script type="module" src="assets/js/account.js"></script>
 </body>
 </html>

@@ -75,7 +75,7 @@ function makeClient(options = {}) {
       },
       signInWithPassword: async (credentials) => {
         calls.signIn.push(credentials);
-        return { data: { session }, error: options.signInError ?? null };
+        return { data: { session: options.reauthSession ?? session }, error: options.signInError ?? null };
       },
       signOut: async (signOutOptions) => {
         calls.signOut.push(signOutOptions);
@@ -421,6 +421,15 @@ test("password changes reject reuse of the current password", async () => {
   assert.equal(client.calls.signIn.length, 0);
 });
 
+test("password changes stop if reauthentication switches accounts", async () => {
+  const client = makeClient({ reauthSession: { user: { id: "different-user" } } });
+  await assert.rejects(
+    createAccountService(client).updatePassword("current-password", "a".repeat(12)),
+    /Your account changed/
+  );
+  assert.deepEqual(client.calls.updateUser, []);
+});
+
 test("password recovery updates without asking for the old password", async () => {
   const client = makeClient();
   const service = createAccountService(client);
@@ -432,7 +441,7 @@ test("password recovery updates without asking for the old password", async () =
   assert.deepEqual(client.calls.signIn, []);
 });
 
-test("account deletion requires the exact phrase and reauthenticates", async () => {
+test("account deletion requires the exact phrase and submits the password to the server", async () => {
   const client = makeClient();
   const service = createAccountService(client);
 
@@ -454,20 +463,18 @@ test("account deletion requires the exact phrase and reauthenticates", async () 
   });
 
   assert.equal(deleted, true);
-  assert.deepEqual(client.calls.signIn, [
-    { email: "user@example.com", password: "password" },
-  ]);
+  assert.deepEqual(client.calls.signIn, []);
   assert.deepEqual(client.calls.invoke, [
     {
       name: "delete-account",
-      body: { confirmation: DELETE_CONFIRMATION },
+      body: { confirmation: DELETE_CONFIRMATION, password: "password" },
     },
   ]);
   assert.deepEqual(client.calls.signOut, [{ scope: "local" }]);
 });
 
-test("account deletion stops when reauthentication fails", async () => {
-  const client = makeClient({ signInError: new Error("Invalid login credentials") });
+test("account deletion stops when server-side password verification fails", async () => {
+  const client = makeClient({ invokeError: { context: { status: 403 } } });
   const service = createAccountService(client);
 
   await assert.rejects(
@@ -476,9 +483,10 @@ test("account deletion stops when reauthentication fails", async () => {
       password: "wrong-password",
       confirmation: DELETE_CONFIRMATION,
     }),
-    /Password is incorrect/
+    /Password is incorrect or your session has expired/
   );
-  assert.equal(client.calls.invoke.length, 0);
+  assert.equal(client.calls.invoke.length, 1);
+  assert.deepEqual(client.calls.signOut, []);
 });
 
 test("account deletion fails closed if the server does not confirm", async () => {

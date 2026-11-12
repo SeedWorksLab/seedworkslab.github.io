@@ -18,10 +18,21 @@ function safeHttpsUrl(value) {
 
   try {
     const url = new URL(value);
-    return url.protocol === "https:" ? url.href : null;
+    return url.protocol === "https:" && !url.username && !url.password ? url.href : null;
   } catch (error) {
     return null;
   }
+}
+
+export function trustedReleaseUrl(value, repo, kind = "download") {
+  const safe = safeHttpsUrl(value);
+  if (!safe || !/^(Coconut|Cherry|Banana)$/.test(repo)) return null;
+  const url = new URL(safe);
+  const prefix = `/SeedWorksLab/${repo}/releases/${kind === "download" ? "download/" : "tag/"}`;
+  return url.hostname === "github.com" && url.port === "" &&
+    url.pathname.startsWith(prefix) && url.pathname.length > prefix.length
+    ? url.href
+    : null;
 }
 
 export function assetKind(name) {
@@ -61,7 +72,7 @@ export function assetLabel(name) {
   }
 }
 
-export function normalizeRelease(raw) {
+export function normalizeRelease(raw, repo) {
   if (!raw || typeof raw !== "object") return null;
 
   const assets = Array.isArray(raw.assets)
@@ -69,7 +80,7 @@ export function normalizeRelease(raw) {
         .map((asset) => {
           if (!asset || typeof asset !== "object") return null;
           const name = asText(asset.name);
-          const url = safeHttpsUrl(asset.browser_download_url);
+          const url = trustedReleaseUrl(asset.browser_download_url, repo);
           if (!name || !url) return null;
           return { name, size: toCount(asset.size), url };
         })
@@ -84,14 +95,14 @@ export function normalizeRelease(raw) {
     prerelease: raw.prerelease === true,
     draft: raw.draft === true,
     publishedAt: asIsoString(raw.published_at),
-    htmlUrl: safeHttpsUrl(raw.html_url),
+    htmlUrl: trustedReleaseUrl(raw.html_url, repo, "tag"),
     assets,
   };
 }
 
-export function normalizeReleases(payload) {
+export function normalizeReleases(payload, repo) {
   if (!Array.isArray(payload)) return [];
-  return payload.map(normalizeRelease).filter((release) => release && !release.draft);
+  return payload.map((item) => normalizeRelease(item, repo)).filter((release) => release && !release.draft);
 }
 
 export function latestStableRelease(releases) {

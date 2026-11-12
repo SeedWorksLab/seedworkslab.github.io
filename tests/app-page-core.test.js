@@ -10,6 +10,7 @@ import {
   normalizeRelease,
   normalizeReleases,
   selectAsset,
+  trustedReleaseUrl,
 } from "../assets/js/app-page-core.js";
 
 const ASSETS = [
@@ -94,13 +95,31 @@ test("release normalization drops drafts and unsafe asset URLs", () => {
         browser_download_url: "javascript:alert(1)",
       },
     ],
-  });
+  }, "Coconut");
 
   assert.equal(release.tag, "v1.2.2");
   assert.equal(release.prerelease, true);
   assert.equal(release.assets.length, 3);
   assert.equal(release.assets[0].size, 108960459);
   assert.equal(release.htmlUrl.endsWith("/v1.2.2"), true);
+});
+
+test("download URLs cannot be redirected to a different host or repository", () => {
+  assert.equal(trustedReleaseUrl(ASSETS[0].browser_download_url, "Coconut"), ASSETS[0].browser_download_url);
+  for (const url of [
+    "https://github.com.evil.example/SeedWorksLab/Coconut/releases/download/v1/a.apk",
+    "https://github.com/SeedWorksLab/Cherry/releases/download/v1/a.apk",
+    "https://github.com@evil.example/SeedWorksLab/Coconut/releases/download/v1/a.apk",
+    "https://github.com/SeedWorksLab/Coconut/releases/download/../other/a.apk",
+    "https://example.com/a.apk",
+  ]) {
+    assert.equal(trustedReleaseUrl(url, "Coconut"), null);
+  }
+  const release = normalizeRelease({ assets: [
+    ...ASSETS,
+    { name: "fake.apk", browser_download_url: "https://example.com/fake.apk" },
+  ] }, "Coconut");
+  assert.equal(release.assets.length, 3);
 });
 
 test("latest stable release ignores pre-releases and drafts", () => {
@@ -123,11 +142,11 @@ test("latest stable release ignores pre-releases and drafts", () => {
       draft: true,
       assets: [],
     },
-  ]);
+  ], "Coconut");
 
   assert.equal(releases.length, 2);
   assert.equal(latestStableRelease(releases).tag, "v1.2.1");
-  assert.equal(latestStableRelease(normalizeReleases([])), null);
+  assert.equal(latestStableRelease(normalizeReleases([], "Coconut")), null);
 });
 
 test("release formatting is stable", () => {

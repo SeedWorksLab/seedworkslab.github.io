@@ -33,6 +33,7 @@ let initialized = false;
 let accountDeleted = false;
 let overviewRequest = 0;
 let renderedUserId = null;
+let authGeneration = 0;
 
 function showView(name) {
   viewNodes.forEach((node) => {
@@ -423,7 +424,6 @@ async function handleDelete(form) {
   setFormBusy(form, true);
   try {
     await service.deleteAccount({
-      email: activeSession?.user?.email,
       password,
       confirmation,
     });
@@ -571,6 +571,11 @@ function readUrlState() {
 }
 
 async function initialize() {
+  if (window.top !== window.self) {
+    showView("framed");
+    return;
+  }
+
   if (!isAccountConfigured(ACCOUNT_CONFIG)) {
     showView("unavailable");
     return;
@@ -608,6 +613,7 @@ async function initialize() {
 
   client.auth.onAuthStateChange((event, session) => {
     if (accountDeleted) return;
+    const generation = ++authGeneration;
 
     if (event === "PASSWORD_RECOVERY") {
       if (!initialized) {
@@ -632,10 +638,17 @@ async function initialize() {
       return;
     }
 
-    if (session && session.user?.id !== activeSession?.user?.id) {
-      renderSignedIn(session).catch(() => {
-        setFlash("Could not load your account.", "error");
-      });
+    if (session) {
+      if (session.user?.id !== activeSession?.user?.id) {
+        // Auth callbacks run inside the client's auth lock; defer any API calls.
+        setTimeout(() => {
+          if (generation === authGeneration && activeSession?.user?.id !== session.user?.id) {
+            renderSignedIn(session).catch(() => {
+              setFlash("Could not load your account.", "error");
+            });
+          }
+        }, 0);
+      }
       return;
     }
 
@@ -661,6 +674,7 @@ async function initialize() {
     if (urlState.code) {
       try {
         const exchanged = await service.exchangeCodeForSession(urlState.code);
+        cleanAuthUrl();
         if (exchanged) session = exchanged;
       } catch (error) {
         recoveryMode = false;
@@ -679,7 +693,8 @@ async function initialize() {
       }
     }
 
-    recoveryMode = urlState.flow === "recovery" || recoveryEventSeen;
+    // A URL parameter alone is not proof of a password-recovery session.
+    recoveryMode = recoveryEventSeen;
     activeSession = session;
     initialized = true;
 

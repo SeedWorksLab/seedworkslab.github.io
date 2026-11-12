@@ -56,11 +56,22 @@ images are self-hosted under `assets/readme/`.
   styles and images, with network access limited to GitHub and Supabase APIs.
 - Authentication uses PKCE, refresh-token rotation, and persistent sessions.
 - Email-link codes are exchanged explicitly, so the password-recovery screen only
-  opens after a valid recovery code exchange.
-- Password changes and account deletion reauthenticate the current password.
+  opens after a verified password-recovery event, never from a URL parameter alone.
+- The portal checks the current password when changing it. Enable Supabase's
+  secure password change setting as additional protection against direct Auth
+  API calls using a stolen session.
 - Account deletion additionally requires the exact confirmation phrase and a
-  server-side service-role function.
+  server-side password check in the `delete-account` service-role function.
+- The account page sends no referrer, limits network requests to the configured
+  Supabase project, and refuses to operate inside a frame.
 - Account pages are excluded from search indexing.
+
+GitHub Pages does not let this site set HTTP response headers such as
+`frame-ancestors`, HSTS, or `Cache-Control: no-store` for the HTML. The page
+uses a meta CSP and a frame guard, but deploying behind a host with proper
+HTTP security headers would provide stronger protection. Auth sessions persist
+in browser storage for usability; a compromised same-origin script can access
+them, so protecting repository and deployment access remains essential.
 
 ## Local checks
 

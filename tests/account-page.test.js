@@ -83,3 +83,51 @@ test("signed-in account page renders normalized profile, connections and usage",
     delete globalThis.window;
   }
 });
+
+test("a recovery query parameter and same-user refresh cannot change the account view", async () => {
+  const nodes = new Map();
+  const views = ["loading", "unavailable", "signed-out", "signed-in", "recovery", "deleted"]
+    .map((name) => Object.assign(element(), { attributes: { "data-account-view": name } }));
+  const session = { user: { id: "user-1", email: "ada@example.com" } };
+  let authCallback;
+  globalThis.document = {
+    querySelectorAll(selector) { return selector === "[data-account-view]" ? views : []; },
+    querySelector() { return null; },
+    getElementById(id) {
+      if (!nodes.has(id)) nodes.set(id, element());
+      return nodes.get(id);
+    },
+    createElement: element,
+  };
+  globalThis.window = {
+    location: { href: "https://seedworkslab.github.io/account.html?flow=recovery" },
+    history: { replaceState() {} },
+    supabase: { createClient: () => ({
+      auth: {
+        onAuthStateChange(callback) { authCallback = callback; },
+        async getSession() { return { data: { session }, error: null }; },
+      },
+      schema: () => ({ rpc: async () => ({ data: { profile: { display_name: "Ada" } }, error: null }) }),
+    }) },
+  };
+
+  try {
+    await import(`../assets/js/account.js?test=${Date.now()}-recovery`);
+    await new Promise((resolve) => setImmediate(resolve));
+    const view = (name) => views.find((node) => node.getAttribute("data-account-view") === name);
+    assert.equal(view("signed-in").hidden, false);
+    assert.equal(view("recovery").hidden, true);
+    authCallback("TOKEN_REFRESHED", session);
+    assert.equal(view("signed-in").hidden, false);
+    authCallback("SIGNED_IN", session);
+    assert.equal(view("signed-in").hidden, false);
+    authCallback("SIGNED_IN", { user: { id: "other-user", email: "other@example.com" } });
+    authCallback("SIGNED_OUT", null);
+    await new Promise((resolve) => setTimeout(resolve, 10));
+    assert.equal(view("signed-out").hidden, false);
+    assert.equal(view("signed-in").hidden, true);
+  } finally {
+    delete globalThis.document;
+    delete globalThis.window;
+  }
+});

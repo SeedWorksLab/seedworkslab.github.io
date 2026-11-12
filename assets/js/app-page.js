@@ -8,7 +8,8 @@ import {
 } from "./app-page-core.js";
 
 const body = document.body;
-const repo = body.dataset.appRepo || "";
+const repo = ["Coconut", "Cherry", "Banana"].includes(body.dataset.appRepo)
+  ? body.dataset.appRepo : "";
 const repoApi = `https://api.github.com/repos/SeedWorksLab/${repo}`;
 const repoWeb = `https://github.com/SeedWorksLab/${repo}`;
 const readmeRawBase = `https://raw.githubusercontent.com/SeedWorksLab/${repo}/HEAD/`;
@@ -101,6 +102,7 @@ function externalLink(href, className, text) {
   link.href = href;
   link.target = "_blank";
   link.rel = "noopener noreferrer";
+  link.referrerPolicy = "no-referrer";
   return link;
 }
 
@@ -259,7 +261,7 @@ async function loadReleases() {
       headers: { Accept: "application/vnd.github+json" },
     });
     if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
-    const releases = normalizeReleases(await response.json());
+    const releases = normalizeReleases(await response.json(), repo);
     renderLatestRelease(releases);
     renderReleaseFeed(releases);
   } catch (error) {
@@ -271,11 +273,11 @@ function rewriteLink(value) {
   const href = String(value ?? "").trim();
   if (!href) return null;
   if (href.startsWith("#")) return `${repoWeb}/blob/HEAD/README.md${href}`;
-  if (/^mailto:/i.test(href)) return href;
+  if (/^mailto:/i.test(href)) return /[\u0000-\u001f\u007f]/.test(href) ? null : href;
 
   try {
     const url = new URL(href, readmeBlobBase);
-    return url.protocol === "https:" || url.protocol === "http:" ? url.href : null;
+    return url.protocol === "https:" && !url.username && !url.password ? url.href : null;
   } catch (error) {
     return null;
   }
@@ -284,11 +286,11 @@ function rewriteLink(value) {
 function rewriteImage(value) {
   const src = String(value ?? "").trim();
   if (!src) return null;
-  if (/^data:image\/(?:png|jpe?g|gif|webp|svg\+xml);/i.test(src)) return src;
+  if (/^data:image\/(?:png|jpe?g|gif|webp);base64,/i.test(src) && src.length <= 65536) return src;
 
   try {
     const url = new URL(src, readmeRawBase);
-    return url.protocol === "https:" ? url.href : null;
+    return url.protocol === "https:" && !url.username && !url.password ? url.href : null;
   } catch (error) {
     return null;
   }
@@ -323,6 +325,7 @@ function sanitizeNode(node) {
       element.setAttribute("href", href);
       element.setAttribute("target", "_blank");
       element.setAttribute("rel", "noopener noreferrer");
+      element.setAttribute("referrerpolicy", "no-referrer");
       return;
     }
 

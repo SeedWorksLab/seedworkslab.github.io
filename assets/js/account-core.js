@@ -317,12 +317,15 @@ export function createAccountService(client, options = {}) {
       const email = normalizeEmail(session.user?.email);
       if (!email) throw new AccountError("Your account has no email address.");
 
-      const { error: reauthError } = await client.auth.signInWithPassword({
+      const { data: reauthData, error: reauthError } = await client.auth.signInWithPassword({
         email,
         password: currentPassword,
       });
       if (reauthError) {
         throw new AccountError(reauthMessage(reauthError, "Current password is incorrect."));
+      }
+      if (reauthData?.session?.user?.id !== session.user?.id) {
+        throw new AccountError("Your account changed. Sign in again before updating your password.");
       }
 
       const { error: updateError } = await client.auth.updateUser({ password: newPassword });
@@ -406,29 +409,22 @@ export function createAccountService(client, options = {}) {
       return normalizeOverview(data);
     },
 
-    async deleteAccount({ email, password, confirmation }) {
+    async deleteAccount({ password, confirmation }) {
       if (confirmation !== DELETE_CONFIRMATION) {
         throw new AccountError("Type the confirmation phrase exactly as shown.");
       }
       if (!password) throw new AccountError("Enter your password to confirm deletion.");
 
-      const session = await sessionOrThrow();
-      const accountEmail = normalizeEmail(session.user?.email || email);
-      if (!accountEmail) throw new AccountError("Your account has no email address.");
-
-      const { error: reauthError } = await client.auth.signInWithPassword({
-        email: accountEmail,
-        password,
-      });
-      if (reauthError) {
-        throw new AccountError(reauthMessage(reauthError, "Password is incorrect."));
-      }
+      await sessionOrThrow();
 
       const { data, error } = await client.functions.invoke(deleteFunction, {
-        body: { confirmation: DELETE_CONFIRMATION },
+        body: { confirmation: DELETE_CONFIRMATION, password },
       });
 
       if (error) {
+        if (error.context?.status === 401 || error.context?.status === 403) {
+          throw new AccountError("Password is incorrect or your session has expired.");
+        }
         throw new AccountError(
           friendlyAuthError(error, "Could not delete the account. Contact support if this persists.")
         );

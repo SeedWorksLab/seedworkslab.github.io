@@ -175,10 +175,24 @@
     };
 
     var enableDownloadLink = function (link, asset) {
+      if (!asset || typeof asset.browser_download_url !== "string") return false;
+      var repo = link.getAttribute("data-download-repo");
+      var url;
+      try {
+        url = new URL(asset.browser_download_url);
+      } catch (error) {
+        return false;
+      }
+      if (url.protocol !== "https:" || url.hostname !== "github.com" || url.port ||
+          url.username || url.password ||
+          url.pathname.indexOf("/SeedWorksLab/" + repo + "/releases/download/") !== 0) {
+        return false;
+      }
       link.classList.remove("is-disabled");
       link.removeAttribute("aria-disabled");
       link.removeAttribute("tabindex");
-      link.href = asset.browser_download_url;
+      link.href = url.href;
+      return true;
     };
 
     var loadLatestRelease = function (repo) {
@@ -198,6 +212,7 @@
     var linksByRepo = {};
     downloadLinks.forEach(function (link) {
       var repo = link.getAttribute("data-download-repo");
+      if (["Coconut", "Cherry", "Banana"].indexOf(repo) === -1) return;
       if (!linksByRepo[repo]) linksByRepo[repo] = [];
       linksByRepo[repo].push(link);
     });
@@ -221,9 +236,7 @@
           linksByRepo[repo].forEach(function (link) {
             var kind = link.getAttribute("data-download-kind");
             var asset = findDownloadAsset(release.assets || [], repo, kind);
-            if (asset) {
-              enableDownloadLink(link, asset);
-            } else {
+            if (!asset || !enableDownloadLink(link, asset)) {
               disableDownloadLink(
                 link,
                 kind === "linux" ? "Linux build \u2014 coming soon" : "Download APK \u2014 coming soon"
