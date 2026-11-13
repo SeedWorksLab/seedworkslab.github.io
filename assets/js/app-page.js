@@ -8,7 +8,7 @@ import {
 } from "./app-page-core.js";
 
 const body = document.body;
-const repo = ["Coconut", "Cherry", "Banana"].includes(body.dataset.appRepo)
+const repo = ["Coconut", "Cherry", "Banana", "Grape"].includes(body.dataset.appRepo)
   ? body.dataset.appRepo : "";
 const repoApi = `https://api.github.com/repos/SeedWorksLab/${repo}`;
 const repoWeb = `https://github.com/SeedWorksLab/${repo}`;

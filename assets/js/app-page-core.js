@@ -26,7 +26,7 @@ function safeHttpsUrl(value) {
 
 export function trustedReleaseUrl(value, repo, kind = "download") {
   const safe = safeHttpsUrl(value);
-  if (!safe || !/^(Coconut|Cherry|Banana)$/.test(repo)) return null;
+  if (!safe || !/^(Coconut|Cherry|Banana|Grape)$/.test(repo)) return null;
   const url = new URL(safe);
   const prefix = `/SeedWorksLab/${repo}/releases/${kind === "download" ? "download/" : "tag/"}`;
   return url.hostname === "github.com" && url.port === "" &&

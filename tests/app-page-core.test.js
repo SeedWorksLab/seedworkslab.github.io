@@ -53,6 +53,17 @@ test("versioned APKs are selected when no stable filename exists", () => {
   assert.equal(apk.name, "coconut-1.2.2.apk");
 });
 
+test("Grape accepts only its own GitHub release assets", () => {
+  assert.equal(
+    trustedReleaseUrl("https://github.com/SeedWorksLab/Grape/releases/download/v1/grape.apk", "Grape"),
+    "https://github.com/SeedWorksLab/Grape/releases/download/v1/grape.apk"
+  );
+  assert.equal(
+    trustedReleaseUrl("https://github.com/SeedWorksLab/Cherry/releases/download/v1/grape.apk", "Grape"),
+    null
+  );
+});
+
 test("stable APK filenames are preferred", () => {
   const assets = [
     ...ASSETS,

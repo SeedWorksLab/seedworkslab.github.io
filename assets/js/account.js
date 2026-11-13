@@ -598,7 +598,7 @@ async function initialize() {
         detectSessionInUrl: false,
         flowType: "pkce",
         persistSession: true,
-        storageKey: "seedworks-account-auth",
+        storageKey: ACCOUNT_CONFIG.authStorageKey,
       },
     }
   );

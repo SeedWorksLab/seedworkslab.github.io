@@ -26,6 +26,9 @@
   --banana: #a87900;
   --banana-soft: #fdf0c2;
   --banana-ink: #4d3a00;
+  --grape: #59451f;
+  --grape-soft: #f3eee3;
+  --grape-ink: #30230e;
 
   --radius-s: 12px;
   --radius-m: 20px;
@@ -69,6 +72,9 @@
   --banana: #f2c14e;
   --banana-soft: #3c330f;
   --banana-ink: #ffefc2;
+  --grape: #dec89e;
+  --grape-soft: #3b3325;
+  --grape-ink: #f2e1be;
 
   --shadow-1: 0 1px 2px rgba(0, 0, 0, .3), 0 1px 3px 1px rgba(0, 0, 0, .22);
   --shadow-2: 0 2px 6px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .3);
@@ -102,6 +108,9 @@
     --banana: #f2c14e;
     --banana-soft: #3c330f;
     --banana-ink: #ffefc2;
+    --grape: #dec89e;
+    --grape-soft: #3b3325;
+    --grape-ink: #f2e1be;
 
     --shadow-1: 0 1px 2px rgba(0, 0, 0, .3), 0 1px 3px 1px rgba(0, 0, 0, .22);
     --shadow-2: 0 2px 6px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .3);
@@ -654,9 +663,15 @@ code {
 }
 
 .stack-card:nth-child(3) {
-  bottom: 0;
+  top: 57%;
   left: 6%;
   transform: rotate(-2deg);
+}
+
+.stack-card:nth-child(4) {
+  bottom: 0;
+  right: 2%;
+  transform: rotate(2deg);
 }
 
 .stack-card:nth-child(1):hover {
@@ -668,6 +683,10 @@ code {
 }
 
 .stack-card:nth-child(3):hover {
+  transform: rotate(0) translateY(-5px);
+}
+
+.stack-card:nth-child(4):hover {
   transform: rotate(0) translateY(-5px);
 }
 
@@ -723,6 +742,10 @@ code {
   --accent-soft: var(--banana-soft);
 }
 
+.stack-card.grape {
+  --accent-soft: var(--grape-soft);
+}
+
 /* App cards */
 
 .app-grid {
@@ -774,6 +797,12 @@ code {
   --accent: var(--banana);
   --accent-soft: var(--banana-soft);
   --accent-ink: var(--banana-ink);
+}
+
+.app-card.grape {
+  --accent: var(--grape);
+  --accent-soft: var(--grape-soft);
+  --accent-ink: var(--grape-ink);
 }
 
 .app-icon {
@@ -1054,6 +1083,8 @@ code {
   --accent: var(--banana);
 }
 
+.jump-grape { --accent: var(--grape); }
+
 .app-jump img {
   width: 20px;
   height: 20px;
@@ -1108,6 +1139,12 @@ code {
   --accent: var(--banana);
   --accent-soft: var(--banana-soft);
   --accent-ink: var(--banana-ink);
+}
+
+.app-detail.grape {
+  --accent: var(--grape);
+  --accent-soft: var(--grape-soft);
+  --accent-ink: var(--grape-ink);
 }
 
 .app-detail-head {
@@ -1651,7 +1688,8 @@ code {
 
   .stack-card:nth-child(1),
   .stack-card:nth-child(2),
-  .stack-card:nth-child(3) {
+  .stack-card:nth-child(3),
+  .stack-card:nth-child(4) {
     top: auto;
     right: auto;
     bottom: auto;
@@ -2303,6 +2341,12 @@ code {
   --accent: var(--banana);
   --accent-soft: var(--banana-soft);
   --accent-ink: var(--banana-ink);
+}
+
+.app-page.app-grape {
+  --accent: var(--grape);
+  --accent-soft: var(--grape-soft);
+  --accent-ink: var(--grape-ink);
 }
 
 .app-page .chip-row {
