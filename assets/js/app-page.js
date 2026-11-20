@@ -185,18 +185,17 @@ function renderReleaseFeed(releases) {
     return;
   }
 
-  releases.slice(0, 10).forEach((release) => {
-    const item = document.createElement("article");
+  releases.forEach((release, index) => {
+    const item = document.createElement("details");
     item.className = "release-item";
+    item.open = index === 0;
     if (release.prerelease) item.classList.add("is-prerelease");
 
-    const head = document.createElement("div");
+    const head = document.createElement("summary");
     head.className = "release-head";
 
     const titleWrap = document.createElement("div");
-    const title = release.htmlUrl
-      ? externalLink(release.htmlUrl, "release-title", release.name)
-      : textNode("h3", "release-title", release.name);
+    const title = textNode("span", "release-title", release.name);
     titleWrap.append(title);
 
     const meta = textNode(
@@ -215,6 +214,19 @@ function renderReleaseFeed(releases) {
     head.append(titleWrap, badge);
     item.append(head);
 
+    if (release.notes) {
+      const notes = document.createElement("div");
+      notes.className = "release-notes";
+      release.notes.split(/\n\s*\n/).forEach((block) => {
+        const heading = /^### /.test(block);
+        notes.append(textNode(heading ? "h4" : "p", "",
+          block.replace(/^### /, "").replace(/^- /gm, "\u2022 ")));
+      });
+      item.append(notes);
+    } else {
+      item.append(textNode("p", "release-empty", "Release notes have not been added to this historical release yet."));
+    }
+
     if (release.assets.length === 0) {
       item.append(textNode("p", "release-empty", "This release has no downloadable assets."));
     } else {
@@ -230,6 +242,9 @@ function renderReleaseFeed(releases) {
       item.append(assets);
     }
 
+    if (release.htmlUrl) {
+      item.append(externalLink(release.htmlUrl, "text-link release-source", "View release on GitHub"));
+    }
     list.append(item);
   });
 }
@@ -256,16 +271,27 @@ function renderReleaseError() {
 }
 
 async function loadReleases() {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15000);
   try {
-    const response = await fetch(`${repoApi}/releases?per_page=10`, {
-      headers: { Accept: "application/vnd.github+json" },
-    });
-    if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
-    const releases = normalizeReleases(await response.json(), repo);
+    const releases = [];
+    for (let page = 1; page <= 10; page++) {
+      const response = await fetch(`${repoApi}/releases?per_page=100&page=${page}`, {
+        signal: controller.signal,
+        headers: { Accept: "application/vnd.github+json" },
+      });
+      if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
+      const payload = await response.json();
+      if (!Array.isArray(payload)) throw new Error("Invalid release feed");
+      releases.push(...normalizeReleases(payload.slice(0, 100), repo));
+      if (payload.length < 100) break;
+    }
     renderLatestRelease(releases);
     renderReleaseFeed(releases);
   } catch (error) {
     renderReleaseError();
+  } finally {
+    clearTimeout(timer);
   }
 }
 

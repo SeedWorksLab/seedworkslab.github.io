@@ -11,7 +11,20 @@ import {
   normalizeReleases,
   selectAsset,
   trustedReleaseUrl,
+  extractReleaseNotes,
 } from "../assets/js/app-page-core.js";
+
+test("marked release notes exclude generated downloads and commit logs", () => {
+  const notes = "### Fixed\n\n- Reliable sync.";
+  const body = `## Release Notes\n<!-- seedworks:release-notes:start -->\n${notes}\n<!-- seedworks:release-notes:end -->\n## Downloads\nprivate build detail`;
+  assert.equal(extractReleaseNotes(body), notes);
+  assert.equal(normalizeRelease({ body }, "Coconut").notes, notes);
+  assert.equal(extractReleaseNotes("## What changed\n- Old unmarked notes."), "");
+  assert.equal(extractReleaseNotes(null), "");
+  assert.equal(extractReleaseNotes(body.replace("release-notes:end", "broken")), "");
+  assert.equal(extractReleaseNotes(body + "<!-- seedworks:release-notes:start -->"), "");
+  assert.equal(extractReleaseNotes(body + "<!-- seedworks:release-notes:end -->"), "");
+});
 
 const ASSETS = [
   {

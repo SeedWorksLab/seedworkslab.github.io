@@ -72,6 +72,18 @@ export function assetLabel(name) {
   }
 }
 
+export function extractReleaseNotes(body) {
+  if (typeof body !== "string" || body.length > 60000) return "";
+  const startMarker = "<!-- seedworks:release-notes:start -->";
+  const endMarker = "<!-- seedworks:release-notes:end -->";
+  const start = body.indexOf(startMarker);
+  const end = body.indexOf(endMarker);
+  if (start < 0 || end < start + startMarker.length ||
+      body.indexOf(startMarker, start + startMarker.length) !== -1 ||
+      body.indexOf(endMarker, end + endMarker.length) !== -1) return "";
+  return body.slice(start + startMarker.length, end).trim();
+}
+
 export function normalizeRelease(raw, repo) {
   if (!raw || typeof raw !== "object") return null;
 
@@ -96,6 +108,7 @@ export function normalizeRelease(raw, repo) {
     draft: raw.draft === true,
     publishedAt: asIsoString(raw.published_at),
     htmlUrl: trustedReleaseUrl(raw.html_url, repo, "tag"),
+    notes: extractReleaseNotes(raw.body),
     assets,
   };
 }

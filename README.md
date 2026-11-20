@@ -48,6 +48,20 @@ The shared release logic lives in `assets/js/app-page-core.js` and is covered by
 `tests/app-page-core.test.js`. `assets/js/app-page.js` handles fetching,
 rendering, README sanitization and safe URL rewriting.
 
+The release feed also displays a changelog: version, publication date and the
+marked `Release Notes` content from each published GitHub release. Notes are
+rendered as text, never trusted HTML. Paragraphs, `###` headings and `-` bullets
+are supported. Drafts/private plans are never shown. Public text can be corrected
+in the GitHub release without redeploying this site; reload to fetch it.
+Pagination is bounded to 1,000 published releases per app.
+
+Each dedicated app page has an `#updates` section with a compact, scrollable
+release history. The newest version is expanded; older versions use accessible
+native disclosure controls to show their complete notes, date and download links.
+An old release without marked notes says so explicitly. Historical Coconut notes
+can be added safely with `seed notes backfill coconut` (preview) and `--apply`
+after review; the migration appends notes without removing old release content.
+
 App READMEs link to these pages with a download button at the top. The button
 images are self-hosted under `assets/readme/`.
 

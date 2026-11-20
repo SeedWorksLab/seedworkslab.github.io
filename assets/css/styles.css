@@ -2573,6 +2573,43 @@ code {
   display: grid;
   gap: .7rem;
   margin-top: .7rem;
+  max-height: 32rem;
+  overflow-y: auto;
+  padding: .25rem;
+}
+
+.release-notes {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+  margin-top: 1rem;
+}
+
+.release-item > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.release-item > summary::-webkit-details-marker {
+  display: none;
+}
+
+.release-item > summary::after {
+  content: "+";
+  color: var(--text-muted);
+}
+
+.release-item[open] > summary::after {
+  content: "\2212";
+}
+
+.release-item > summary:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+.release-source {
+  display: inline-block;
+  margin-top: .75rem;
 }
 
 .release-item {
