@@ -34,7 +34,7 @@ test("signed-in account page renders normalized profile, connections and usage",
     createElement: element,
   };
   globalThis.window = {
-    location: { href: "https://seedworkslab.github.io/account.html" },
+    location: { href: "https://seedworkslab.de/account.html" },
     history: { replaceState() {} },
     supabase: {
       createClient: () => ({
@@ -100,7 +100,7 @@ test("a recovery query parameter and same-user refresh cannot change the account
     createElement: element,
   };
   globalThis.window = {
-    location: { href: "https://seedworkslab.github.io/account.html?flow=recovery" },
+    location: { href: "https://seedworkslab.de/account.html?flow=recovery" },
     history: { replaceState() {} },
     supabase: { createClient: () => ({
       auth: {

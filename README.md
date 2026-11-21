@@ -1,7 +1,12 @@
-# seedworkslab.github.io
+# SeedWorks — seedworkslab.de
 
 Static GitHub Pages site for SeedWorks, including the optional Seed account
 portal.
+
+The public origin is **https://seedworkslab.de**. The GitHub repository and local
+directory remain `seedworkslab.github.io`; do not rename them during the domain
+move. See [DOMAIN-MIGRATION.md](DOMAIN-MIGRATION.md) for the HTTPS, deployment,
+Supabase and browser-storage cutover checklist.
 
 ## Seed account portal
 

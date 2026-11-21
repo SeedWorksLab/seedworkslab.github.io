@@ -24,6 +24,17 @@ test("all pages have a restrictive CSP; only account and Coconut web can contact
   }
 });
 
+test("structured metadata is allowed by the page CSP after URL changes", () => {
+  for (const page of pages) {
+    const html = readFileSync(new URL(`../${page}`, import.meta.url), "utf8");
+    const policy = html.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/i)?.[1];
+    for (const match of html.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+      const hash = createHash("sha256").update(match[1]).digest("base64");
+      assert.ok(policy.includes(`'sha256-${hash}'`), `${page}: metadata hash is stale`);
+    }
+  }
+});
+
 test("the account page protects recovery links and pins the vendored auth script", () => {
   const html = readFileSync(new URL("../account.html", import.meta.url), "utf8");
   assert.match(html, /<meta name="referrer" content="no-referrer">/);

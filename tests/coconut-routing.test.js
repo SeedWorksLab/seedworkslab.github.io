@@ -4,7 +4,7 @@ import { test } from "node:test";
 import { runInNewContext } from "node:vm";
 
 const script = readFileSync(new URL("../assets/js/coconut-route-redirect.js", import.meta.url), "utf8");
-const origin = "https://seedworkslab.github.io";
+const origin = "https://seedworkslab.de";
 
 function route(url) {
   const redirects = [];
