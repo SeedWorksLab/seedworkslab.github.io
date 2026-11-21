@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <meta name="referrer" content="no-referrer">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src https://qslmlcvskctvyngofipe.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; worker-src 'none'; upgrade-insecure-requests">
+  <title>Authorize Coconut — SeedWorks</title>
+  <link rel="icon" href="/assets/icons/seedworks.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/assets/css/styles.css">
+</head>
+<body>
+  <main class="container" id="main">
+    <section class="page-hero">
+      <a class="brand" href="/account.html">SeedWorks account</a>
+      <h1>Sign in with SeedWorks</h1>
+      <p id="oauth-status" role="status">Checking this authorization request…</p>
+      <a id="oauth-login" class="button button-primary" hidden>Sign in to SeedWorks</a>
+      <section id="oauth-request" hidden aria-label="Authorization request">
+        <h2 id="oauth-app"></h2>
+        <p id="oauth-identity"></p>
+        <p id="oauth-permission"></p>
+        <p>Coconut cannot access your other apps’ data through this authorization.
+          Only continue if you started sign-in from Coconut.</p>
+        <button class="button button-primary" id="oauth-approve" type="button">Allow Coconut</button>
+        <button class="button button-outlined" id="oauth-deny" type="button">Cancel</button>
+      </section>
+      <p><a href="/account.html">Manage your SeedWorks account and app access</a></p>
+    </section>
+  </main>
+  <script src="/assets/vendor/supabase/supabase-js-2.119.0.js" integrity="sha256-qGftvPsCk3Cu7HIj3WGAtWC2IfvjvGTGWE+wNp0be84="></script>
+  <script type="module" src="/assets/js/oauth-consent.js"></script>
+</body>
+</html>

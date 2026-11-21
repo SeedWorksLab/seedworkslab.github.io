@@ -7,9 +7,10 @@ const pages = [
   "index.html", "about.html", "apps.html", "contact.html", "404.html",
   "account.html", "apps/coconut/index.html", "apps/cherry/index.html",
   "apps/banana/index.html", "apps/grape/index.html", "apps/coconut/web/index.html",
+  "oauth/consent.html",
 ];
 
-test("all pages have a restrictive CSP; only account and Coconut web can contact Supabase", () => {
+test("all pages have a restrictive CSP; only account, consent and legacy Coconut can contact Supabase", () => {
   for (const page of pages) {
     const html = readFileSync(new URL(`../${page}`, import.meta.url), "utf8");
     const policy = html.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)"/i)?.[1];
@@ -18,7 +19,7 @@ test("all pages have a restrictive CSP; only account and Coconut web can contact
       assert.ok(policy.includes(directive), `${page}: missing ${directive}`);
     }
     assert.ok(!/script-src[^;]*'unsafe-inline'/.test(policy), `${page}: unsafe inline scripts`);
-    if (page !== "account.html" && page !== "apps/coconut/web/index.html") {
+    if (page !== "account.html" && page !== "apps/coconut/web/index.html" && page !== "oauth/consent.html") {
       assert.ok(!policy.includes("supabase.co"), `${page}: unexpected account API permission`);
     }
   }

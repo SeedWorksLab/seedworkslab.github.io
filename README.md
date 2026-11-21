@@ -44,7 +44,8 @@ downloads from the newest stable GitHub release, a release feed that also lists
 pre-releases, and the repository README rendered from the GitHub API.
 
 - `/apps/coconut/` — Android APK and Linux builds
-- `/apps/coconut/web/` — account-required Coconut web app
+- `https://coconut.seedworkslab.de/` — account-required Coconut web app
+- `/apps/coconut/web/` — retained legacy app for existing users' data migration
 - `/apps/cherry/` — Android APK
 - `/apps/banana/` — Android APK
 - `/apps/grape/` — planned Android APK; no releases published yet
@@ -72,23 +73,29 @@ images are self-hosted under `assets/readme/`.
 
 ## Hosted app releases and shared login
 
-The Coconut release builds `build/coconut-web.zip` in its own repository.
-After review, stage `build/hosted-web/` into this site's `apps/coconut/web/`
-with `npm run stage:hosted-web` from the Coconut repository, review the website
-diff, and deploy the website independently. Do not publish a draft GitHub
-release as though it had already deployed the web app. `.nojekyll` is required
-to serve Expo's `_expo/` directory on GitHub Pages. The root `404.html` only
-redirects Coconut's missing deep links back to its web entry point.
+The Coconut release builds its web ZIP and deploys stable published releases
+through Coconut's own Pages workflow to `coconut.seedworkslab.de`. Do not stage
+new exports in this website. The old `/apps/coconut/web/` build and its deep-link
+handler remain available so users can sync/export before moving origins.
 
-Future official hosted apps should use **the same SeedWorks Cloud URL, public
-publishable key, Supabase Auth project, and browser storage key
-`seedworks-account-auth`**. They must keep financial caches app-specific and
-bound to the signed-in user's UUID; signing out of the portal signs out the
-hosted apps on the next load. Do not share this session with self-hosted
-Supabase projects. Because every hosted app runs on the same GitHub Pages
-origin, any compromised same-origin app script could access the shared
-session. GitHub Pages cannot provide HttpOnly cookies or per-app origin
-isolation.
+Central SSO uses the existing account portal and `/oauth/consent.html`.
+Supabase's OAuth server handles authorization codes and PKCE; the website
+verifies the signed-in user and only approves the explicitly registered Coconut
+client, exact callback and `email` scope. Previously granted requests can return
+without another consent prompt. The account page can revoke OAuth grants.
+
+App subdomains keep independent sessions and user-bound caches; they must not
+copy tokens or use shared-domain token cookies. The same local-storage key on
+different origins does **not** share a session. Central sign-out does not
+automatically log out every app. Revoking a grant prevents refresh, not necessarily
+immediate use of an already-issued JWT. GitHub Pages cannot provide HttpOnly
+session cookies or erase browser SQLite remotely.
+
+Before deploying the SSO frontend, apply the reviewed OAuth-client isolation
+migration and updated delete-account function from the Supabase repository.
+See `Coconut/docs/hosted-web.md` for the ordered rollout, DNS/Pages configuration,
+security boundaries and production acceptance checks. Future clients require
+explicit frontend registration and backend authorization policies.
 
 ## Security
 

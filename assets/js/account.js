@@ -1,4 +1,6 @@
 import { ACCOUNT_CONFIG } from "./account-config.js";
+import { authorizationId } from "./oauth-core.js";
+import { createGrantView } from "./oauth-grants.js";
 import {
   AccountError,
   DELETE_CONFIRMATION,
@@ -34,6 +36,8 @@ let accountDeleted = false;
 let overviewRequest = 0;
 let renderedUserId = null;
 let authGeneration = 0;
+let grantView = null;
+const pendingAuthorization = authorizationId(new URL(window.location.href).searchParams.get("authorization_id"));
 
 function showView(name) {
   viewNodes.forEach((node) => {
@@ -211,6 +215,12 @@ async function renderSignedIn(session) {
   }
 
   showView("signed-in");
+  void grantView?.refresh();
+  const continueLink = document.getElementById("oauth-continue");
+  if (continueLink && pendingAuthorization) {
+    continueLink.href = `/oauth/consent.html?authorization_id=${encodeURIComponent(pendingAuthorization)}`;
+    continueLink.hidden = false;
+  }
   const requestId = ++overviewRequest;
   if (renderedUserId !== session.user?.id) {
     renderedUserId = session.user?.id;
@@ -606,6 +616,7 @@ async function initialize() {
   service = createAccountService(client, {
     deleteFunction: ACCOUNT_CONFIG.deleteFunction,
   });
+  grantView = createGrantView(client);
 
   bindPasswordVisibility();
   bindForms();
@@ -629,6 +640,7 @@ async function initialize() {
     if (!initialized) return;
 
     if (event === "SIGNED_OUT") {
+      grantView?.clear();
       ++overviewRequest;
       activeSession = null;
       renderedUserId = null;

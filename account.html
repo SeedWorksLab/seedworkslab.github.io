@@ -193,7 +193,11 @@
                   <button class="button button-tonal" id="account-signout" type="button">Sign out</button>
                 </div>
               </div>
-              <p><a class="button button-primary" href="/apps/coconut/web/">Open Coconut on the web</a></p>
+              <p><a id="oauth-continue" class="button button-primary" hidden>Continue signing in to Coconut</a></p>
+              <p><a class="button button-primary" href="https://coconut.seedworkslab.de/">Open Coconut on the web</a></p>
+              <h3>Authorized apps</h3>
+              <p>App subdomains have separate sessions. Signing out here does not sign out every app. Revoking app access stops future token refreshes; existing access tokens may remain valid until expiry.</p>
+              <div id="oauth-grants" aria-live="polite"></div>
 
               <dl class="account-details">
                 <div>
