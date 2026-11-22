@@ -194,10 +194,6 @@
                 </div>
               </div>
               <p><a id="oauth-continue" class="button button-primary" hidden>Continue signing in to Coconut</a></p>
-              <p><a class="button button-primary" href="https://coconut.seedworkslab.de/">Open Coconut on the web</a></p>
-              <h3>Authorized apps</h3>
-              <p>App subdomains have separate sessions. Signing out here does not sign out every app. Revoking app access stops future token refreshes; existing access tokens may remain valid until expiry.</p>
-              <div id="oauth-grants" aria-live="polite"></div>
 
               <dl class="account-details">
                 <div>
@@ -228,6 +224,14 @@
               <p id="display-name-hint" class="account-field-hint">Use up to 80 characters. Your Seed username is shared with connected apps when they support account sync; leave blank to clear it.</p>
 
               <p id="overview-error" class="account-warning" hidden></p>
+            </section>
+
+            <section class="account-card account-oauth-card" aria-labelledby="oauth-grants-title">
+              <span class="eyebrow">Sign-in permissions</span>
+              <h2 id="oauth-grants-title">Authorized apps</h2>
+              <p class="account-card-lede">Apps you have allowed to sign in with your SeedWorks account. These permissions are separate from the connected devices listed below.</p>
+              <ul id="oauth-grants" class="account-list" aria-live="polite"></ul>
+              <p class="account-field-hint">App subdomains have separate sessions. Signing out here does not sign out every app. Revoking access stops future token refreshes; existing access tokens may remain valid until expiry.</p>
             </section>
 
             <div class="account-columns">

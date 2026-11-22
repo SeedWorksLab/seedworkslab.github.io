@@ -1994,6 +1994,12 @@ code {
   margin-inline: auto;
 }
 
+.account-oauth-card > .account-field-hint {
+  margin: 1rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid var(--outline);
+}
+
 .account-card-heading {
   justify-content: space-between;
   margin-bottom: 1.1rem;

@@ -18,7 +18,10 @@ test("the pinned browser SDK supports the consent and grant APIs actually used b
       let body = { id: "11111111-1111-4111-8111-111111111111" };
       if (url.includes("/user/oauth/grants")) {
         if (options.method === "DELETE") return new Response(null, { status: 204 });
-        body = [{ client_id: COCONUT_CLIENT_ID }];
+        body = [{
+          client: { id: COCONUT_CLIENT_ID, name: "Coconut Web", uri: "", logo_uri: "" },
+          scopes: ["email"], granted_at: "2026-11-22T00:00:00Z",
+        }];
       }
       return new Response(JSON.stringify(body), { headers: { "Content-Type": "application/json" } });
     },
@@ -36,7 +39,7 @@ test("the pinned browser SDK supports the consent and grant APIs actually used b
   assert.equal((await client.auth.setSession({ access_token: token, refresh_token: "test-refresh" })).error, null);
   const grants = await client.auth.oauth.listGrants();
   assert.equal(grants.error, null);
-  assert.equal(grants.data[0].client_id, COCONUT_CLIENT_ID);
+  assert.equal(grants.data[0].client.id, COCONUT_CLIENT_ID);
   assert.equal((await client.auth.oauth.revokeGrant({ clientId: COCONUT_CLIENT_ID })).error, null);
   const revoked = calls.find(({ options }) => options.method === "DELETE");
   assert.equal(new URL(revoked.url).searchParams.get("client_id"), COCONUT_CLIENT_ID);
