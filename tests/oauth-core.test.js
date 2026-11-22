@@ -11,9 +11,24 @@ const consent = {
 
 test("authorization IDs cannot inject a return URL", () => {
   assert.equal(authorizationId(id), id);
-  for (const value of [null, "", "//evil.example", `${id}&redirect=evil`, "<script>"]) {
+  for (const value of [
+    null, "", "//evil.example", `${id}&redirect=evil`, "<script>",
+    "a".repeat(31), "a".repeat(129), "../" + "a".repeat(32),
+    "a".repeat(32) + "/extra", "a".repeat(32) + "%2Fextra",
+    "a".repeat(32) + "?redirect=evil", "a".repeat(32) + "#fragment",
+  ]) {
     assert.equal(authorizationId(value), null);
   }
+});
+
+test("authorization IDs accept Supabase's opaque format, not just UUIDs", () => {
+  for (const value of [
+    "0123456789abcdef0123456789abcdef",
+    "aB3_dE6-gH9_jK2-mN5_pQ8-rS1_uV4-",
+    "a".repeat(128),
+  ]) assert.equal(authorizationId(value), value);
+  const opaque = "0123456789abcdef0123456789abcdef";
+  assert.equal(validateConsent({ ...consent, authorization_id: opaque }, opaque, "user-1").name, "Coconut");
 });
 
 test("consent requires the registered app, callback, signed-in user and exact scopes", () => {

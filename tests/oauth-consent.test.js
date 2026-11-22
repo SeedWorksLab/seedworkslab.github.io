@@ -2,12 +2,16 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { COCONUT_CALLBACK, COCONUT_CLIENT_ID } from "../assets/js/oauth-core.js";
 
-const id = "11111111-1111-4111-8111-111111111111";
+// Actual hosted Supabase authorize responses use opaque 32-character IDs.
+const id = "0123456789abcdef0123456789abcdef";
 const callback = `${COCONUT_CALLBACK}?code=once&state=${"s".repeat(43)}`;
 let sequence = 0;
 const flush = () => new Promise((resolve) => setImmediate(resolve));
 
-async function page({ signedIn = true, details, origin = "https://seedworkslab.de", ready = true } = {}) {
+async function page({
+  signedIn = true, details, origin = "https://seedworkslab.de", ready = true,
+  query = `?authorization_id=${id}`, boundaryError = null,
+} = {}) {
   const nodes = new Map();
   const redirects = [];
   const calls = [];
@@ -15,7 +19,7 @@ async function page({ signedIn = true, details, origin = "https://seedworkslab.d
   const client = {
     async rpc(name) {
       assert.equal(name, "seed_oauth_sso_ready");
-      return { data: ready };
+      return { data: ready, error: boundaryError };
     },
     auth: {
       async getUser() { return { data: { user: signedIn ? { id: userId, email: "ada@example.com" } : null } }; },
@@ -47,7 +51,7 @@ async function page({ signedIn = true, details, origin = "https://seedworkslab.d
   };
   globalThis.window = {
     location: {
-      href: `${origin}/oauth/consent.html?authorization_id=${id}`,
+      href: `${origin}/oauth/consent.html${query}`,
       replace: (url) => redirects.push(url),
     },
     addEventListener() {},
@@ -104,6 +108,29 @@ test("consent fails closed before approving if backend isolation is not ready", 
   assert.equal(invalid.calls.length, 0);
   assert.equal(invalid.redirects.length, 0);
   assert.equal(invalid.nodes.get("oauth-request").hidden, true);
+  assert.match(invalid.nodes.get("oauth-status").textContent, /server-side security checks are not ready/);
+  assert.doesNotMatch(invalid.nodes.get("oauth-status").textContent, /expired/);
+});
+
+test("missing backend migration gives a safe, actionable error without exposing server details", async () => {
+  const invalid = await page({
+    boundaryError: { code: "PGRST202", message: "private server detail" },
+  });
+  assert.equal(invalid.calls.length, 0);
+  assert.match(invalid.nodes.get("oauth-status").textContent, /SSO migration and API request guard/);
+  assert.doesNotMatch(invalid.nodes.get("oauth-status").textContent, /private server detail/);
+});
+
+test("missing, duplicate and path-injection authorization IDs cannot start consent", async () => {
+  for (const query of [
+    "", `?authorization_id=${id}&authorization_id=${id}`,
+    `?authorization_id=${encodeURIComponent("../" + id)}`,
+  ]) {
+    const invalid = await page({ query });
+    assert.equal(invalid.calls.length, 0);
+    assert.equal(invalid.redirects.length, 0);
+    assert.equal(invalid.nodes.get("oauth-request").hidden, true);
+  }
 });
 
 test.after(() => {

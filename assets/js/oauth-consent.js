@@ -11,10 +11,12 @@ let id;
 let userId;
 let busy = false;
 
-function fail() {
+function fail(error) {
   request.hidden = true;
   login.hidden = true;
-  status.textContent = "This sign-in request could not be verified or has expired. Return to Coconut and start sign-in again.";
+  status.textContent = error?.code === "seedworks_backend_not_ready"
+    ? "SeedWorks sign-in is temporarily unavailable because its server-side security checks are not ready. The site administrator must check the SSO migration and API request guard. Return to Coconut and try again after this is resolved."
+    : "This sign-in request could not be verified or has expired. Return to Coconut and start sign-in again.";
 }
 
 async function details() {
@@ -70,7 +72,9 @@ async function initialize() {
   }
   userId = verified.data.user.id;
   const boundary = await client.rpc("seed_oauth_sso_ready");
-  if (boundary.error || boundary.data !== true) throw new Error("Backend client isolation is not ready.");
+  if (boundary.error || boundary.data !== true) {
+    throw Object.assign(new Error("Backend client isolation is not ready."), { code: "seedworks_backend_not_ready" });
+  }
   const current = await details();
   if ("redirect_url" in current) {
     window.location.replace(validateOAuthRedirect(current.redirect_url));

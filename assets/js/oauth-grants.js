@@ -19,7 +19,7 @@ export function createGrantView(client) {
       if (error || !Array.isArray(data)) throw new Error("Unavailable");
       list.replaceChildren();
       if (!data.length) {
-        list.textContent = "No OAuth apps authorized.";
+        list.textContent = "No apps authorized yet. Sign in to Coconut and approve its access to add it here.";
         return;
       }
       for (const grant of data) {

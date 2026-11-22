@@ -2,8 +2,11 @@ export const COCONUT_CLIENT_ID = "978d0b67-d40a-4cd2-a686-b0e4f9ab4d22";
 export const COCONUT_CALLBACK = "https://coconut.seedworkslab.de/auth/callback";
 
 export function authorizationId(value) {
+  // Supabase issues opaque IDs (currently 32 characters), not necessarily
+  // UUIDs. Only bound/path-safe syntax is checked here; Auth verifies validity,
+  // ownership and expiry before any authorization decision.
   return typeof value === "string"
-    && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value)
+    && /^[A-Za-z0-9_-]{32,128}$/.test(value)
     ? value : null;
 }
 

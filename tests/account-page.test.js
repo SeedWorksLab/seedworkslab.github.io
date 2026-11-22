@@ -17,7 +17,7 @@ function element() {
   };
 }
 
-test("signed-in account page renders normalized profile, connections and usage", async () => {
+test("signed-in account page renders profile and usage, and continues an opaque-ID OAuth request", async () => {
   const nodes = new Map();
   const views = ["loading", "unavailable", "signed-out", "signed-in", "recovery", "deleted"]
     .map((name) => Object.assign(element(), { attributes: { "data-account-view": name } }));
@@ -34,7 +34,7 @@ test("signed-in account page renders normalized profile, connections and usage",
     createElement: element,
   };
   globalThis.window = {
-    location: { href: "https://seedworkslab.de/account.html" },
+    location: { href: "https://seedworkslab.de/account.html?authorization_id=0123456789abcdef0123456789abcdef" },
     history: { replaceState() {} },
     supabase: {
       createClient: () => ({
@@ -75,6 +75,9 @@ test("signed-in account page renders normalized profile, connections and usage",
     assert.equal(nodes.get("usage-total-records").textContent, "7");
     assert.equal(nodes.get("usage-total-size").textContent, "1 KB");
     assert.equal(nodes.get("overview-error").hidden, true);
+    assert.equal(nodes.get("oauth-continue").hidden, false);
+    assert.equal(nodes.get("oauth-continue").href,
+      "/oauth/consent.html?authorization_id=0123456789abcdef0123456789abcdef");
 
     authCallback("SIGNED_OUT", null);
     assert.equal(views.find((node) => node.getAttribute("data-account-view") === "signed-in").hidden, true);
