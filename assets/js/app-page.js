@@ -14,6 +14,7 @@ const repoApi = `https://api.github.com/repos/SeedWorksLab/${repo}`;
 const repoWeb = `https://github.com/SeedWorksLab/${repo}`;
 const readmeRawBase = `https://raw.githubusercontent.com/SeedWorksLab/${repo}/HEAD/`;
 const readmeBlobBase = `${repoWeb}/blob/HEAD/`;
+let cachedReleases = null;
 
 const ALLOWED_TAGS = new Set([
   "a",
@@ -196,6 +197,7 @@ function renderReleaseFeed(releases) {
 
     const titleWrap = document.createElement("div");
     const title = textNode("span", "release-title", release.name);
+    title.setAttribute("translate", "no");
     titleWrap.append(title);
 
     const meta = textNode(
@@ -217,6 +219,7 @@ function renderReleaseFeed(releases) {
     if (release.notes) {
       const notes = document.createElement("div");
       notes.className = "release-notes";
+      notes.setAttribute("translate", "no");
       release.notes.split(/\n\s*\n/).forEach((block) => {
         const heading = /^### /.test(block);
         notes.append(textNode(heading ? "h4" : "p", "",
@@ -288,6 +291,7 @@ async function loadReleases() {
     }
     renderLatestRelease(releases);
     renderReleaseFeed(releases);
+    cachedReleases = releases;
   } catch (error) {
     renderReleaseError();
   } finally {
@@ -408,7 +412,10 @@ async function loadReadme() {
     if (!response.ok) throw new Error(`GitHub API returned ${response.status}`);
 
     const fragment = sanitizeReadme(await response.text());
-    container.replaceChildren(fragment);
+    const content = document.createElement("div");
+    content.setAttribute("translate", "no");
+    content.append(fragment);
+    container.replaceChildren(content);
     container.setAttribute("aria-busy", "false");
   } catch (error) {
     container.replaceChildren();
@@ -425,3 +432,13 @@ if (repo) {
   loadReleases();
   loadReadme();
 }
+
+globalThis.window?.addEventListener("seedworks:languagechange", () => {
+  if (!cachedReleases) return;
+  const opened = [...document.querySelectorAll("#release-list > details")].map((item) => item.open);
+  renderLatestRelease(cachedReleases);
+  renderReleaseFeed(cachedReleases);
+  document.querySelectorAll("#release-list > details").forEach((item, index) => {
+    item.open = opened[index] ?? index === 0;
+  });
+});

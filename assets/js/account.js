@@ -1,6 +1,7 @@
 import { ACCOUNT_CONFIG } from "./account-config.js";
 import { authorizationId } from "./oauth-core.js";
 import { createGrantView } from "./oauth-grants.js";
+import { bindProfilePicture } from "./profile-picture.js";
 import {
   AccountError,
   DELETE_CONFIRMATION,
@@ -37,6 +38,9 @@ let overviewRequest = 0;
 let renderedUserId = null;
 let authGeneration = 0;
 let grantView = null;
+let pictureView = null;
+let latestOverview = null;
+let overviewNeedsRetry = false;
 const pendingAuthorization = authorizationId(new URL(window.location.href).searchParams.get("authorization_id"));
 
 function showView(name) {
@@ -124,7 +128,9 @@ function renderConnections(connections) {
 
     const copy = document.createElement("div");
     copy.append(textElement("h3", "", connection.appName));
-    copy.append(textElement("p", "", connection.deviceName || "Unknown device"));
+    const device = textElement("p", "", connection.deviceName || "Unknown device");
+    if (connection.deviceName) device.setAttribute("translate", "no");
+    copy.append(device);
     main.append(copy);
 
     const meta = document.createElement("div");
@@ -189,6 +195,7 @@ function renderDisplayName(session, displayName) {
 }
 
 function renderAccountIdentity(session, overview) {
+  latestOverview = { userId: session.user?.id, overview };
   const email = session.user?.email || "Unknown email";
   const displayName = overview.profile?.displayName;
   const memberSince = overview.profile?.createdAt || session.user?.created_at;
@@ -203,6 +210,25 @@ function renderAccountIdentity(session, overview) {
   if (memberNode) memberNode.textContent = formatDate(memberSince);
   if (lastSignInNode) lastSignInNode.textContent = formatDateTime(session.user?.last_sign_in_at);
   if (overviewError) overviewError.hidden = true;
+}
+
+window.addEventListener("seedworks:languagechange", () => {
+  if (!activeSession || latestOverview?.userId !== activeSession.user?.id) return;
+  const { overview } = latestOverview;
+  document.getElementById("account-member-since").textContent =
+    formatDate(overview.profile?.createdAt || activeSession.user?.created_at);
+  document.getElementById("account-last-sign-in").textContent =
+    formatDateTime(activeSession.user?.last_sign_in_at);
+  renderConnections(overview.connections);
+  renderUsage(overview.usage, overview.totals);
+});
+
+function scheduleOverviewRetry(session) {
+  // Auth callbacks run under the SDK lock: never start API calls there.
+  setTimeout(() => {
+    if (activeSession !== session || recoveryMode || accountDeleted || !overviewNeedsRetry) return;
+    void renderSignedIn(session);
+  }, 0);
 }
 
 async function renderSignedIn(session) {
@@ -222,12 +248,15 @@ async function renderSignedIn(session) {
     continueLink.hidden = false;
   }
   const requestId = ++overviewRequest;
+  overviewNeedsRetry = false;
   if (renderedUserId !== session.user?.id) {
+    pictureView?.clear();
     renderedUserId = session.user?.id;
     renderAccountIdentity(session, emptyOverview());
     renderConnections([]);
     renderUsage([], emptyOverview().totals);
   }
+  void pictureView?.refresh();
 
   try {
     const overview = await service.loadOverview();
@@ -236,15 +265,18 @@ async function renderSignedIn(session) {
     renderConnections(overview.connections);
     renderUsage(overview.usage, overview.totals);
     return true;
-  } catch (error) {
+  } catch {
     if (requestId !== overviewRequest || activeSession?.user?.id !== session.user?.id) return false;
+    overviewNeedsRetry = true;
     const overviewError = document.getElementById("overview-error");
     if (overviewError) {
-      overviewError.textContent =
-        error instanceof AccountError
-          ? error.message
-          : "Could not load connected apps and data usage.";
+      // A failed details request does not establish that the user is signed out.
+      overviewError.textContent = "Could not load connected apps and data usage.";
       overviewError.hidden = false;
+    }
+    // A refresh may have completed while this request was using the old token.
+    if (activeSession?.access_token !== session.access_token) {
+      scheduleOverviewRetry(activeSession);
     }
     return false;
   }
@@ -438,6 +470,7 @@ async function handleDelete(form) {
       confirmation,
     });
     accountDeleted = true;
+    pictureView?.clear();
     ++overviewRequest;
     form.reset();
     showView("deleted");
@@ -617,6 +650,10 @@ async function initialize() {
     deleteFunction: ACCOUNT_CONFIG.deleteFunction,
   });
   grantView = createGrantView(client);
+  pictureView = bindProfilePicture(client, {
+    userId: () => activeSession?.user?.id,
+    notify: setFlash,
+  });
 
   bindPasswordVisibility();
   bindForms();
@@ -640,6 +677,7 @@ async function initialize() {
     if (!initialized) return;
 
     if (event === "SIGNED_OUT") {
+      pictureView?.clear();
       grantView?.clear();
       ++overviewRequest;
       activeSession = null;
@@ -660,6 +698,11 @@ async function initialize() {
             });
           }
         }, 0);
+      } else {
+        activeSession = session;
+        if (event === "TOKEN_REFRESHED" || event === "SIGNED_IN") {
+          scheduleOverviewRetry(session);
+        }
       }
       return;
     }
@@ -667,6 +710,7 @@ async function initialize() {
     ++overviewRequest;
     activeSession = null;
     renderedUserId = null;
+    pictureView?.clear();
     showView("signed-out");
   });
 

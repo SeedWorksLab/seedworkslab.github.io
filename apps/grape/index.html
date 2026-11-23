@@ -16,6 +16,8 @@
   <link rel="icon" href="/assets/icons/grape-favicon.png" type="image/png">
   <link rel="stylesheet" href="/assets/css/styles.css">
   <script src="/assets/js/theme-init.js"></script>
+  <script src="/assets/js/language-init.js"></script>
+  <script type="module" src="/assets/js/i18n.js"></script>
 </head>
 <body class="app-page app-grape" data-app-repo="Grape" data-app-name="Grape">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -26,6 +28,14 @@
         <a href="/">Home</a><a href="/apps.html" aria-current="page">Apps</a><a href="/about.html">About</a><a href="/contact.html">Contact</a><a href="/account.html">Account</a><a class="nav-github" href="https://github.com/SeedWorksLab">GitHub</a>
       </nav>
       <div class="header-actions">
+        <label class="language-picker">
+          <span class="visually-hidden">Language</span>
+          <select data-language-select>
+            <option value="en" translate="no">English</option>
+            <option value="hu" translate="no">Magyar</option>
+            <option value="de" translate="no">Deutsch</option>
+          </select>
+        </label>
         <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme">
           <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg>
           <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42M17.65 17.65l1.42-1.42M2 12h2M4.93 4.93l1.42 1.42M4.93 19.07l1.42-1.42M17.65 6.35l1.42-1.42"/></svg>

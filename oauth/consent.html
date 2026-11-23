@@ -9,8 +9,26 @@
   <title>Authorize Coconut — SeedWorks</title>
   <link rel="icon" href="/assets/icons/seedworks.svg" type="image/svg+xml">
   <link rel="stylesheet" href="/assets/css/styles.css">
+  <script src="/assets/js/theme-init.js"></script>
+  <script src="/assets/js/language-init.js"></script>
+  <script type="module" src="/assets/js/i18n.js"></script>
 </head>
 <body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="/account.html">SeedWorks</a>
+      <div class="header-actions">
+        <label class="language-picker">
+          <span class="visually-hidden">Language</span>
+          <select data-language-select>
+            <option value="en" translate="no">English</option>
+            <option value="hu" translate="no">Magyar</option>
+            <option value="de" translate="no">Deutsch</option>
+          </select>
+        </label>
+      </div>
+    </div>
+  </header>
   <main class="container" id="main">
     <section class="page-hero">
       <a class="brand" href="/account.html">SeedWorks account</a>

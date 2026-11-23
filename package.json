@@ -5,7 +5,7 @@
   "type": "module",
   "description": "SeedWorks company website and Seed account portal.",
   "scripts": {
-    "check": "node --check assets/js/main.js && node --check assets/js/theme-init.js && node --check assets/js/account-config.js && node --check assets/js/account-core.js && node --check assets/js/account.js && node --check assets/js/oauth-core.js && node --check assets/js/oauth-consent.js && node --check assets/js/oauth-grants.js && node --check assets/js/app-page-core.js && node --check assets/js/app-page.js && node --check assets/js/coconut-route-redirect.js",
+    "check": "node --check assets/js/main.js && node --check assets/js/theme-init.js && node --check assets/js/language-init.js && node --check assets/js/i18n-core.js && node --check assets/js/i18n.js && node --check assets/js/translations.js && node --check assets/js/account-config.js && node --check assets/js/account-core.js && node --check assets/js/account.js && node --check assets/js/profile-picture.js && node --check assets/js/oauth-core.js && node --check assets/js/oauth-consent.js && node --check assets/js/oauth-grants.js && node --check assets/js/app-page-core.js && node --check assets/js/app-page.js",
     "test": "node --test tests/*.test.js"
   }
 }

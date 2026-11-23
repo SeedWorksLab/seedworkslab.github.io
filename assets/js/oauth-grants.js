@@ -59,6 +59,7 @@ export function createGrantView(client) {
         const copy = document.createElement("div");
         const name = document.createElement("h3");
         name.textContent = grant.name;
+        if (grant.name !== "Authorized application") name.setAttribute("translate", "no");
         const description = document.createElement("p");
         description.textContent = grant.isCoconut ? "Coconut web · SeedWorks sign-in" : "SeedWorks sign-in";
         copy.append(name, description);
@@ -70,7 +71,8 @@ export function createGrantView(client) {
         revoke.setAttribute("aria-label", `Revoke ${grant.name} access`);
         revoke.addEventListener("click", async () => {
           if (current !== generation || revoke.disabled) return;
-          if (!window.confirm("Revoke this app’s access? It will need authorization again. Existing access tokens may work until they expire.")) return;
+          const message = "Revoke this app’s access? It will need authorization again. Existing access tokens may work until they expire.";
+          if (!window.confirm(window.SeedI18n?.t(message) || message)) return;
           revoke.disabled = true;
           revoke.textContent = "Revoking…";
           try {

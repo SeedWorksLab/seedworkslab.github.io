@@ -1,3 +1,5 @@
+import { currentLocale } from "./i18n-core.js";
+
 export const DELETE_CONFIRMATION = "DELETE MY SEED ACCOUNT";
 export const MAX_DISPLAY_NAME_LENGTH = 80;
 export const MIN_PASSWORD_LENGTH = 12;
@@ -179,7 +181,7 @@ export function formatBytes(value) {
   const units = ["B", "KB", "MB", "GB", "TB"];
   const exponent = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
   const amount = bytes / 1024 ** exponent;
-  const formatted = new Intl.NumberFormat("en-GB", {
+  const formatted = new Intl.NumberFormat(currentLocale(), {
     maximumFractionDigits: exponent === 0 ? 0 : 1,
   }).format(amount);
 
@@ -187,7 +189,7 @@ export function formatBytes(value) {
 }
 
 export function formatCount(value) {
-  return new Intl.NumberFormat("en-GB").format(toCount(value));
+  return new Intl.NumberFormat(currentLocale()).format(toCount(value));
 }
 
 export function formatDate(value) {
@@ -196,7 +198,7 @@ export function formatDate(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Unknown";
 
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(currentLocale(), {
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -209,7 +211,7 @@ export function formatDateTime(value) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "Unknown";
 
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(currentLocale(), {
     day: "numeric",
     month: "short",
     year: "numeric",

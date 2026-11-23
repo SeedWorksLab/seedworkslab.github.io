@@ -37,6 +37,35 @@ imports existing Coconut usernames and mirrors future changes between the Seed
 profile and Coconut's synced `coconut.settings` username. Coconut picks changes
 up on its next sync. Cherry and Banana do not yet implement account sync.
 
+## Profile picture editor
+
+Click the avatar on the account page to view its picture and edit/delete
+actions. Empty avatars open the same upload editor directly. The dialog supports
+mouse/touch dragging, arrow-key positioning, zoom, crop reset and cancellation;
+deletion requires confirmation. Only the processed 256×256 PNG is uploaded.
+Re-editing uses that saved crop; users can upload the original again for a
+wider crop. The existing server-side limits and permissions are unchanged.
+
+## Website languages
+
+Every website header includes an English / Magyar / Deutsch selector, including
+the account portal and OAuth consent page. The preference is stored locally as
+`seedworks-language`, shared across website pages and synchronized between tabs.
+Without a saved preference, the first supported browser language is used,
+falling back to English. App subdomains have independent preferences.
+
+`assets/js/translations.js` contains Hungarian/German translations keyed by the
+authored English text. When editing website copy, update this catalogue too;
+tests check static copy, metadata and accessibility labels for coverage.
+`i18n.js` updates text and accessibility attributes without replacing markup,
+resetting forms, navigating, or sending data to a translation service. It also
+translates asynchronous account/release status messages. Dates and numbers
+follow the selected locale. The English HTML remains the no-JavaScript fallback.
+
+Usernames, device names, form values, technical confirmation phrases, and external
+README/release-note content are not translated. Mark other user/external content
+with `translate="no"`. Repository content remains in its original language.
+
 ## App pages
 
 Each app has a dedicated page at `/apps/<slug>/` with platform highlights,
@@ -45,7 +74,6 @@ pre-releases, and the repository README rendered from the GitHub API.
 
 - `/apps/coconut/` — Android APK and Linux builds
 - `https://coconut.seedworkslab.de/` — account-required Coconut web app
-- `/apps/coconut/web/` — retained legacy app for existing users' data migration
 - `/apps/cherry/` — Android APK
 - `/apps/banana/` — Android APK
 - `/apps/grape/` — planned Android APK; no releases published yet
@@ -76,7 +104,8 @@ images are self-hosted under `assets/readme/`.
 The Coconut release builds its web ZIP and deploys stable published releases
 through Coconut's own Pages workflow to `coconut.seedworkslab.de`. Do not stage
 new exports in this website. The old `/apps/coconut/web/` build and its deep-link
-handler remain available so users can sync/export before moving origins.
+handler have been removed. Those paths return the ordinary website 404, not an
+app shell or a redirect. Only the product page remains at `/apps/coconut/`.
 
 Central SSO uses the existing account portal and `/oauth/consent.html`.
 Supabase's OAuth server handles authorization codes and PKCE; the website

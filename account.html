@@ -8,7 +8,7 @@
   <meta name="robots" content="noindex">
   <meta name="referrer" content="no-referrer">
   <meta name="theme-color" content="#fbf9f4" id="theme-color">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; font-src 'self'; connect-src https://qslmlcvskctvyngofipe.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; worker-src 'none'; upgrade-insecure-requests">
+   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; font-src 'self'; connect-src https://qslmlcvskctvyngofipe.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src 'none'; worker-src 'none'; upgrade-insecure-requests">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="SeedWorks">
   <meta property="og:title" content="Seed account — SeedWorks">
@@ -16,6 +16,8 @@
   <link rel="icon" href="assets/icons/seedworks.svg" type="image/svg+xml">
   <link rel="stylesheet" href="assets/css/styles.css">
   <script src="assets/js/theme-init.js"></script>
+  <script src="/assets/js/language-init.js"></script>
+  <script type="module" src="/assets/js/i18n.js"></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -37,6 +39,14 @@
       </nav>
 
       <div class="header-actions">
+        <label class="language-picker">
+          <span class="visually-hidden">Language</span>
+          <select data-language-select>
+            <option value="en" translate="no">English</option>
+            <option value="hu" translate="no">Magyar</option>
+            <option value="de" translate="no">Deutsch</option>
+          </select>
+        </label>
         <button class="icon-button theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme">
           <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>
@@ -195,14 +205,25 @@
               </div>
               <p><a id="oauth-continue" class="button button-primary" hidden>Continue signing in to Coconut</a></p>
 
+              <div class="account-picture-identity">
+                <button id="picture-open" class="account-picture-button" type="button" aria-label="Manage profile picture" aria-haspopup="dialog" aria-controls="picture-dialog">
+                  <img id="account-picture" class="account-picture" width="80" height="80" alt="Your profile picture" hidden>
+                  <span id="account-picture-fallback" class="account-picture account-picture-fallback" aria-label="No profile picture">
+                    <svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4.4 0-8 2.2-8 5v1h16v-1c0-2.8-3.6-5-8-5Z"/></svg>
+                  </span>
+                  <span class="account-picture-badge" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="m16.9 3.9 3.2 3.2-11 11-4.3 1.1 1.1-4.3 11-11Zm1.4-1.4a2 2 0 0 1 2.8 0l.4.4a2 2 0 0 1 0 2.8l-.7.7-3.2-3.2.7-.7Z"/></svg>
+                  </span>
+                </button>
+              </div>
               <dl class="account-details">
                 <div>
                   <dt>Email</dt>
-                  <dd id="account-email">—</dd>
+                  <dd id="account-email" translate="no">—</dd>
                 </div>
                 <div>
                   <dt>Username</dt>
-                  <dd id="account-name">—</dd>
+                  <dd id="account-name" translate="no">—</dd>
                 </div>
                 <div>
                   <dt>Member since</dt>
@@ -223,6 +244,56 @@
               </form>
               <p id="display-name-hint" class="account-field-hint">Use up to 80 characters. Your Seed username is shared with connected apps when they support account sync; leave blank to clear it.</p>
 
+              <dialog id="picture-dialog" class="picture-dialog" aria-labelledby="picture-dialog-title">
+                <div class="picture-dialog-heading">
+                  <h2 id="picture-dialog-title">Profile picture</h2>
+                  <button id="picture-close" class="icon-button" type="button" aria-label="Close profile picture">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+                  </button>
+                </div>
+                <p id="picture-status" class="account-warning" role="status" hidden></p>
+                <div id="picture-menu">
+                  <img id="picture-menu-image" class="picture-menu-image" width="192" height="192" alt="Your profile picture" hidden>
+                  <p class="picture-description">A little more you. Manage the picture on your Seed account.</p>
+                  <div class="picture-dialog-actions">
+                    <button id="picture-edit" type="button" class="button button-primary">Edit picture</button>
+                    <button id="picture-remove" type="button" class="button button-outlined">Delete picture</button>
+                  </div>
+                </div>
+                <form id="picture-form" class="account-picture-form" data-account-form hidden>
+                  <input id="picture-file" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+                  <div id="picture-upload-empty" class="picture-upload-empty">
+                    <svg viewBox="0 0 24 24" width="44" height="44" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8" cy="8" r="1.5"/><path d="m4 17 5-5 4 4 3-3 5 5"/></svg>
+                    <h3>Make it your own</h3>
+                    <p>Upload a photo, then drag it to find the perfect crop.</p>
+                  </div>
+                  <button id="picture-choose" type="button" class="button button-outlined">Upload photo</button>
+                  <p id="picture-existing-hint" class="account-field-hint" hidden>Only the saved crop is available. Upload the original photo again for a wider crop.</p>
+                  <div id="picture-editor" hidden>
+                    <div class="picture-crop-stage">
+                      <canvas id="picture-preview" class="account-picture-preview" width="256" height="256" tabindex="0" role="img" aria-label="Profile picture crop preview" aria-describedby="picture-drag-hint"></canvas>
+                      <div class="picture-crop-guide" aria-hidden="true"></div>
+                    </div>
+                    <p id="picture-drag-hint" class="account-field-hint">Drag to reposition. Use the arrow keys for precise adjustments.</p>
+                    <label for="picture-zoom">Zoom</label>
+                    <input id="picture-zoom" type="range" min="1" max="3" step="0.01" value="1">
+                    <button id="picture-reset" type="button" class="account-inline-button">Reset crop</button>
+                  </div>
+                  <p id="picture-hint" class="account-field-hint">JPEG, PNG or WebP, up to 10 MB and 40 megapixels. Only the cropped 256 × 256 picture is saved; the original and its metadata are not uploaded.</p>
+                  <div class="picture-dialog-actions">
+                    <button id="picture-cancel" type="button" class="button button-outlined">Cancel</button>
+                    <button id="picture-save" type="submit" class="button button-primary" disabled>Save picture</button>
+                  </div>
+                </form>
+                <div id="picture-delete-confirm" hidden>
+                  <h3>Remove your profile picture?</h3>
+                  <p>Your account will use the default icon instead. You can add a new photo at any time.</p>
+                  <div class="picture-dialog-actions">
+                    <button id="picture-delete-cancel" type="button" class="button button-outlined">Cancel</button>
+                    <button id="picture-delete" type="button" class="button button-danger">Delete picture</button>
+                  </div>
+                </div>
+              </dialog>
               <p id="overview-error" class="account-warning" hidden></p>
             </section>
 

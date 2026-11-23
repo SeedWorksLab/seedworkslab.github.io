@@ -1,41 +1,36 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
 import { test } from "node:test";
-import { runInNewContext } from "node:vm";
 
-const script = readFileSync(new URL("../assets/js/coconut-route-redirect.js", import.meta.url), "utf8");
-const origin = "https://seedworkslab.de";
+const root = new URL("../", import.meta.url);
 
-function route(url) {
-  const redirects = [];
-  const restores = [];
-  const location = new URL(url, origin);
-  const window = {
-    location: {
-      href: location.href,
-      replace(href) { redirects.push(href); },
-    },
-    history: {
-      state: null,
-      replaceState(_state, _unused, path) { restores.push(path); },
-    },
-  };
-  runInNewContext(script, { window, URL });
-  return { redirects, restores };
-}
-
-test("GitHub Pages 404 restores Coconut deep links without intercepting other apps", () => {
-  const deep = route("/apps/coconut/web/transaction/123?view=all");
-  assert.equal(deep.redirects.length, 1);
-  assert.equal(new URL(deep.redirects[0]).searchParams.get("coconut-route"),
-    "/apps/coconut/web/transaction/123?view=all");
-  assert.equal(route("/apps/cherry/web/transaction/123").redirects.length, 0);
-  assert.equal(route("/apps/coconut/web/_expo/static/js/missing.js").redirects.length, 0);
+test("the legacy Coconut web build and its route-restoration script are absent", () => {
+  assert.equal(existsSync(new URL("apps/coconut/web", root)), false);
+  assert.equal(existsSync(new URL("assets/js/coconut-route-redirect.js", root)), false);
+  const notFound = readFileSync(new URL("404.html", root), "utf8");
+  assert.ok(!notFound.includes("coconut-route"));
+  assert.ok(!notFound.includes("http-equiv=\"refresh\""));
 });
 
-test("Coconut restores only safe, same-origin app paths", () => {
-  const valid = route("/apps/coconut/web/?coconut-route=%2Fapps%2Fcoconut%2Fweb%2Fshared%2Fexpense");
-  assert.equal(valid.restores[0], "/apps/coconut/web/shared/expense");
-  const malicious = route("/apps/coconut/web/?coconut-route=https%3A%2F%2Fevil.example%2F");
-  assert.equal(malicious.restores.length, 0);
+test("public website files do not link to or restore the deleted Coconut app", () => {
+  function inspect(directory) {
+    for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (entry.name.startsWith(".") || entry.name === "tests") continue;
+      const file = new URL(entry.name, directory);
+      if (entry.isDirectory()) {
+        inspect(new URL(`${entry.name}/`, directory));
+      } else if (/\.(html|js|xml)$/.test(entry.name)) {
+        const text = readFileSync(file, "utf8");
+        assert.ok(!text.includes("/apps/coconut/web"), `${file.pathname}: legacy app path`);
+        assert.ok(!text.includes("coconut-route"), `${file.pathname}: legacy route handler`);
+      }
+    }
+  }
+  inspect(root);
+});
+
+test("the Coconut product page links to the dedicated app domain", () => {
+  const page = readFileSync(new URL("apps/coconut/index.html", root), "utf8");
+  assert.match(page, /href="https:\/\/coconut\.seedworkslab\.de\/">Use Coconut on the web<\/a>/);
+  assert.match(page, /rel="canonical" href="https:\/\/seedworkslab\.de\/apps\/coconut\/"/);
 });
